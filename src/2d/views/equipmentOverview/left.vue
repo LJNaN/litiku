@@ -74,7 +74,9 @@
 <script setup>
 import axios from 'axios'
 import Left from "@/2d/components/Left.vue"
-import { ref, onMounted } from "vue"
+import { ref, onMounted, getCurrentInstance } from "vue"
+const { appContext: { app: { config: { globalProperties: { $isOurSite } } } } } = getCurrentInstance()
+
 
 let stackerList = ref([])
 const stackerStatus = [{
@@ -88,25 +90,22 @@ const stackerStatus = [{
   text: '故障'
 }]
 function initStackerList () {
-  axios.get('/api/GetStacker').then(res => {
-    if (res.status === 200) {
-      stackerList.value = res.data.message.map(item => {
-        let status = ""
-        if (item.D_Status === '使用') {
-          status = 2
-        }
-        return { name: item.D_Name, status }
-      })
-    }
+  let res = {}
+  axios.get('/api/GetStacker').then(res1 => {
+    res = res1
   }).catch(() => {
-    const tempArr = []
-    for (let i = 0; i < 18; i++) {
-      tempArr.push({
-        name: '堆垛机' + (i + 1),
-        status: 2
-      })
+    res = { data: { "code": 200, "message": [{ "D_Name": "堆垛机17", "D_Status": "使用" }, { "D_Name": "堆垛机10", "D_Status": "使用" }, { "D_Name": "堆垛机11", "D_Status": "使用" }, { "D_Name": "堆垛机12", "D_Status": "使用" }, { "D_Name": "堆垛机13", "D_Status": "使用" }, { "D_Name": "堆垛机14", "D_Status": "使用" }, { "D_Name": "堆垛机15", "D_Status": "使用" }, { "D_Name": "堆垛机16", "D_Status": "使用" }, { "D_Name": "堆垛机18", "D_Status": "使用" }, { "D_Name": "堆垛机1", "D_Status": "使用" }, { "D_Name": "堆垛机2", "D_Status": "使用" }, { "D_Name": "堆垛机3", "D_Status": "使用" }, { "D_Name": "堆垛机4", "D_Status": "使用" }, { "D_Name": "堆垛机5", "D_Status": "使用" }, { "D_Name": "堆垛机6", "D_Status": "使用" }, { "D_Name": "堆垛机7", "D_Status": "使用" }, { "D_Name": "堆垛机8", "D_Status": "使用" }, { "D_Name": "堆垛机9", "D_Status": "使用" }] } }
+  }).finally(() => {
+    if ($isOurSite) {
+      res = { data: { "code": 200, "message": [{ "D_Name": "堆垛机17", "D_Status": "使用" }, { "D_Name": "堆垛机10", "D_Status": "使用" }, { "D_Name": "堆垛机11", "D_Status": "使用" }, { "D_Name": "堆垛机12", "D_Status": "使用" }, { "D_Name": "堆垛机13", "D_Status": "使用" }, { "D_Name": "堆垛机14", "D_Status": "使用" }, { "D_Name": "堆垛机15", "D_Status": "使用" }, { "D_Name": "堆垛机16", "D_Status": "使用" }, { "D_Name": "堆垛机18", "D_Status": "使用" }, { "D_Name": "堆垛机1", "D_Status": "使用" }, { "D_Name": "堆垛机2", "D_Status": "使用" }, { "D_Name": "堆垛机3", "D_Status": "使用" }, { "D_Name": "堆垛机4", "D_Status": "使用" }, { "D_Name": "堆垛机5", "D_Status": "使用" }, { "D_Name": "堆垛机6", "D_Status": "使用" }, { "D_Name": "堆垛机7", "D_Status": "使用" }, { "D_Name": "堆垛机8", "D_Status": "使用" }, { "D_Name": "堆垛机9", "D_Status": "使用" }] } }
     }
-    stackerList.value = tempArr
+    stackerList.value = res.data.message.map(item => {
+      let status = ""
+      if (item.D_Status === '使用') {
+        status = 2
+      }
+      return { name: item.D_Name, status }
+    })
   })
 }
 
@@ -131,39 +130,42 @@ let efficiencyList = ref([{
   value: '0'
 }])
 function initEfficiencyList () {
-  axios.get('/api/GetEquipmentRatio').then(res => {
-    if (res.status === 200) {
-      efficiencyList.value[0].value = res.data.message.机器人
-      efficiencyList.value[1].value = res.data.message.堆垛机
-      efficiencyList.value[2].value = res.data.message.入库线
-      efficiencyList.value[3].value = res.data.message.多品分拣线
-      efficiencyList.value[4].value = res.data.message.单品分拣线
-      efficiencyList.value[5].value = res.data.message.空箱补给线
+  let res = {}
+  axios.get('/api/GetEquipmentRatio').then(res1 => {
+    res = res1
+  }).catch(() => {
+    res = { data: { "code": 200, "message": { "机器人": 0, "堆垛机": 0, "入库线": 0, "多品分拣线": 0, "单品分拣线": 0, "空箱补给线": 0 } } }
+  }).finally(() => {
+    if ($isOurSite) {
+      res = { data: { "code": 200, "message": { "机器人": 100, "堆垛机": 100, "入库线": 100, "多品分拣线": 100, "单品分拣线": 100, "空箱补给线": 100 } } }
     }
-  }).catch(() => { })
+    efficiencyList.value[0].value = res.data.message.机器人
+    efficiencyList.value[1].value = res.data.message.堆垛机
+    efficiencyList.value[2].value = res.data.message.入库线
+    efficiencyList.value[3].value = res.data.message.多品分拣线
+    efficiencyList.value[4].value = res.data.message.单品分拣线
+    efficiencyList.value[5].value = res.data.message.空箱补给线
+  })
 }
 
 let pickRobotList = ref([])
 function initPickRobotList () {
-  axios.get('/api/GetRobot').then(res => {
-    if (res.status === 200) {
-      pickRobotList.value = res.data.message.map(item => {
-        let status = ""
-        if (item.D_Status === '使用') {
-          status = 2
-        }
-        return { name: item.D_Name, status }
-      })
-    }
+  let res = {}
+  axios.get('/api/GetRobot').then(res1 => {
+    res = res1
   }).catch(() => {
-    const tempArr = []
-    for (let i = 0; i < 8; i++) {
-      tempArr.push({
-        name: '机器人' + (i + 1),
-        status: 2
-      })
+    res = { data: { "code": 200, "message": [{ "D_Name": "机器人6", "D_Status": "使用" }, { "D_Name": "机器人4", "D_Status": "使用" }, { "D_Name": "机器人5", "D_Status": "使用" }, { "D_Name": "机器人7", "D_Status": "使用" }, { "D_Name": "机器人8", "D_Status": "使用" }, { "D_Name": "机器人3", "D_Status": "使用" }, { "D_Name": "机器人2", "D_Status": "使用" }, { "D_Name": "机器人1", "D_Status": "使用" }] } }
+  }).finally(() => {
+    if ($isOurSite) {
+      res = { data: { "code": 200, "message": [{ "D_Name": "机器人6", "D_Status": "使用" }, { "D_Name": "机器人4", "D_Status": "使用" }, { "D_Name": "机器人5", "D_Status": "使用" }, { "D_Name": "机器人7", "D_Status": "使用" }, { "D_Name": "机器人8", "D_Status": "使用" }, { "D_Name": "机器人3", "D_Status": "使用" }, { "D_Name": "机器人2", "D_Status": "使用" }, { "D_Name": "机器人1", "D_Status": "使用" }] } }
     }
-    pickRobotList.value = tempArr
+    pickRobotList.value = res.data.message.map(item => {
+      let status = ""
+      if (item.D_Status === '使用') {
+        status = 2
+      }
+      return { name: item.D_Name, status }
+    })
   })
 }
 

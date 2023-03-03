@@ -1,11 +1,7 @@
 <template>
   <Left class="left">
     <div class="left-status">
-      <div
-        class="left-status-item"
-        v-for="(item, index) in stockStatus"
-        :key="index"
-      >
+      <div class="left-status-item" v-for="(item, index) in stockStatus" :key="index">
         <img :src="'./assets/2d/images/digitalReservoirArea/' + item.img" />
         <div class="left-status-item-right">
           <p class="left-status-item-right-name">{{ item.name }}</p>
@@ -17,9 +13,11 @@
 </template>
 
 <script setup>
-import Left from "@/2d/components/Left.vue";
+import Left from "@/2d/components/Left.vue"
 import axios from 'axios'
-import { ref, onMounted } from "vue";
+import { ref, onMounted, getCurrentInstance } from "vue"
+const { appContext: { app: { config: { globalProperties: { $isOurSite } } } } } = getCurrentInstance()
+
 
 let stockStatus = ref([
   {
@@ -42,7 +40,7 @@ let stockStatus = ref([
     value: 0,
     img: "left_icon3.png",
   },
-]);
+])
 
 onMounted(() => {
   getStockStatus()
@@ -54,23 +52,30 @@ setInterval(() => {
 }, 30000)
 
 // 库存状态
-function getStockStatus() {
-  axios.get('/api/GetInventory').then(res => {
-    if(res.status === 200) {
-      stockStatus.value[0].value = res.data.message.out
-      stockStatus.value[1].value = res.data.message.in
-      stockStatus.value[2].value = res.data.message.stock
-      stockStatus.value[3].value = res.data.message.surplus
+function getStockStatus () {
+  let res = {}
+  axios.get('/api/GetInventory').then(res1 => {
+    res = res1
+  }).catch(() => {
+    res = { data: { "code": 200, "message": { "stock": 0, "surplus": 0, "in": 0, "out": 0 } } }
+  }).finally(() => {
+    if ($isOurSite) {
+      res = { data: { "code": 200, "message": { "stock": 29494, "surplus": 15768, "in": 267, "out": 2879 } } }
     }
+    stockStatus.value[0].value = res.data.message.out
+    stockStatus.value[1].value = res.data.message.in
+    stockStatus.value[2].value = res.data.message.stock
+    stockStatus.value[3].value = res.data.message.surplus
   })
 }
 </script>
 
 <style lang="less" scoped>
-.left{
+.left {
   background: url("./assets/2d/images/digitalReservoirArea/cebian.png") left / 0.21vw 100% no-repeat,
     url("./assets/2d/images/digitalReservoirArea/yuandian.png") left center / 0.21vw 2.59vh no-repeat;
 }
+
 .left-status {
   display: flex;
   flex-direction: column;
@@ -96,6 +101,7 @@ function getStockStatus() {
       justify-content: space-between;
       margin-left: 0.21vw;
       padding: 0.27vh 0 0.83vh 0;
+
       &-name {
         font-size: 0.73vw;
         font-family: "Source Han Sans SC";

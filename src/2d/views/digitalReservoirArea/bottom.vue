@@ -1,7 +1,8 @@
 <template>
   <Bottom style="height: 20.7vh">
     <card-chunk title="日吞吐量" class="chunk1">
-      <chart-view v-if="JSON.stringify(echart.cargoInfoOption.value) != '{}'" :chartOption="echart.cargoInfoOption.value || {}" auto-tooltip></chart-view>
+      <chart-view v-if="JSON.stringify(echart.cargoInfoOption.value) != '{}'"
+        :chartOption="echart.cargoInfoOption.value || {}" auto-tooltip></chart-view>
     </card-chunk>
 
     <card-chunk title="推垛机" class="chunk2" :moreText="stackerStatus">
@@ -41,16 +42,19 @@
     </card-chunk>
 
     <card-chunk title="流量趋势" class="chunk4">
-      <chart-view v-if="JSON.stringify(echart.flowTrendOption.value) != '{}'" :chartOption="echart.flowTrendOption.value || {}" auto-tooltip></chart-view>
+      <chart-view v-if="JSON.stringify(echart.flowTrendOption.value) != '{}'"
+        :chartOption="echart.flowTrendOption.value || {}" auto-tooltip></chart-view>
     </card-chunk>
   </Bottom>
 </template>
 
 <script setup>
 import Bottom from "@/2d/components/Bottom.vue"
-import axios from "axios";
-import { ref, reactive, onMounted } from "vue";
-import * as echarts from "echarts";
+import axios from "axios"
+import { ref, reactive, onMounted, getCurrentInstance } from "vue"
+import * as echarts from "echarts"
+const { appContext: { app: { config: { globalProperties: { $isOurSite } } } } } = getCurrentInstance()
+
 
 onMounted(() => {
   initCargoInfoList()
@@ -60,7 +64,7 @@ onMounted(() => {
 
   // echart.cargoInfo()
   // echart.flowTrend()
-});
+})
 
 
 // 30s update
@@ -72,59 +76,37 @@ setInterval(() => {
 }, 30000)
 
 // 日吞吐量
-function initCargoInfoList() {
+function initCargoInfoList () {
+  let res = {}
   echart.cargoInfoList.value = {}
-  axios.get('/api/GetHourTrend').then(res => {
-    if(res.status === 200) {
-      echart.cargoInfoList.value = res.data.message
-      echart.cargoInfo()
-    }
+  axios.get('/api/GetHourTrend').then(res1 => {
+    res = res1
   }).catch(() => {
-    const hour = ['04:00', '08:00', '12:00', '16:00', '20:00', '24:00']
-    const tempArr1 = []
-    const tempArr2 = []
-    for (let i = 0; i < 6; i++) {
-      tempArr1.push({
-        hour: hour[i],
-        total: Math.floor(Math.random() * 5000),
-      });
-      tempArr2.push({
-        hour: hour[i],
-        total: Math.floor(Math.random() * 5000),
-      });
+    res = { data: { "code": 200, "message": { "out": [{ "hour": 0, "total": 0 }, { "hour": 1, "total": 0 }, { "hour": 2, "total": 0 }, { "hour": 3, "total": 0 }, { "hour": 4, "total": 0 }, { "hour": 5, "total": 0 }, { "hour": 6, "total": 0 }, { "hour": 7, "total": 0 }, { "hour": 8, "total": 0 }, { "hour": 9, "total": 0 }, { "hour": 10, "total": 0 }, { "hour": 11, "total": 0 }, { "hour": 12, "total": 0 }, { "hour": 13, "total": 0 }, { "hour": 14, "total": 0 }, { "hour": 15, "total": 0 }, { "hour": 16, "total": 0 }, { "hour": 17, "total": 0 }, { "hour": 18, "total": 0 }, { "hour": 19, "total": 0 }, { "hour": 20, "total": 0 }, { "hour": 21, "total": 0 }, { "hour": 22, "total": 0 }, { "hour": 23, "total": 0 }], "in": [{ "hour": 0, "total": 0 }, { "hour": 1, "total": 0 }, { "hour": 2, "total": 0 }, { "hour": 3, "total": 0 }, { "hour": 4, "total": 0 }, { "hour": 5, "total": 0 }, { "hour": 6, "total": 0 }, { "hour": 7, "total": 0 }, { "hour": 8, "total": 0 }, { "hour": 9, "total": 0 }, { "hour": 10, "total": 0 }, { "hour": 11, "total": 0 }, { "hour": 12, "total": 0 }, { "hour": 13, "total": 0 }, { "hour": 14, "total": 0 }, { "hour": 15, "total": 0 }, { "hour": 16, "total": 0 }, { "hour": 17, "total": 0 }, { "hour": 18, "total": 0 }, { "hour": 19, "total": 0 }, { "hour": 20, "total": 0 }, { "hour": 21, "total": 0 }, { "hour": 22, "total": 0 }, { "hour": 23, "total": 0 }] } } }
+  }).finally(() => {
+    if ($isOurSite) {
+      res = { data: { "code": 200, "message": { "out": [{ "hour": 0, "total": 0 }, { "hour": 1, "total": 0 }, { "hour": 2, "total": 0 }, { "hour": 3, "total": 0 }, { "hour": 4, "total": 0 }, { "hour": 5, "total": 0 }, { "hour": 6, "total": 0 }, { "hour": 7, "total": 0 }, { "hour": 8, "total": 873 }, { "hour": 9, "total": 1255 }, { "hour": 10, "total": 751 }, { "hour": 11, "total": 0 }, { "hour": 12, "total": 0 }, { "hour": 13, "total": 0 }, { "hour": 14, "total": 0 }, { "hour": 15, "total": 0 }, { "hour": 16, "total": 0 }, { "hour": 17, "total": 0 }, { "hour": 18, "total": 0 }, { "hour": 19, "total": 0 }, { "hour": 20, "total": 0 }, { "hour": 21, "total": 0 }, { "hour": 22, "total": 0 }, { "hour": 23, "total": 0 }], "in": [{ "hour": 0, "total": 0 }, { "hour": 1, "total": 0 }, { "hour": 2, "total": 0 }, { "hour": 3, "total": 0 }, { "hour": 4, "total": 0 }, { "hour": 5, "total": 0 }, { "hour": 6, "total": 0 }, { "hour": 7, "total": 0 }, { "hour": 8, "total": 0 }, { "hour": 9, "total": 4 }, { "hour": 10, "total": 341 }, { "hour": 11, "total": 0 }, { "hour": 12, "total": 0 }, { "hour": 13, "total": 0 }, { "hour": 14, "total": 0 }, { "hour": 15, "total": 0 }, { "hour": 16, "total": 0 }, { "hour": 17, "total": 0 }, { "hour": 18, "total": 0 }, { "hour": 19, "total": 0 }, { "hour": 20, "total": 0 }, { "hour": 21, "total": 0 }, { "hour": 22, "total": 0 }, { "hour": 23, "total": 0 }] } } }
     }
-    echart.cargoInfoList.value.in = tempArr1
-    echart.cargoInfoList.value.out = tempArr2
+    echart.cargoInfoList.value = res.data.message
     echart.cargoInfo()
   })
 }
 
 // 流量趋势
-function initFlowTrend() {
+function initFlowTrend () {
+  let res = {}
   echart.flowTrend1.value = []
   echart.flowTrend2.value = []
-  axios.get('/api/GetDayTrend').then(res => {
-    if(res.status === 200) {
-      echart.flowTrend1.value = res.data.message.in
-      echart.flowTrend2.value = res.data.message.out
-      echart.flowTrend()
-    }
+  axios.get('/api/GetDayTrend').then(res1 => {
+    res = res1
   }).catch(() => {
-    const tempArr1 = []
-    const tempArr2 = []
-    for (let i = 0; i < 7; i++) {
-      tempArr1.push({
-        date: '2023-01-0' + (i + 1),
-        total: Math.floor(Math.random() * 10000)
-      });
-      tempArr2.push({
-        date: '2023-01-0' + (i + 1),
-        total: Math.floor(Math.random() * 10000)
-      });
+    res = { data: { "code": 200, "message": { "out": [{ "date": "2023-02-25", "total": 0 }, { "date": "2023-02-26", "total": 0 }, { "date": "2023-02-27", "total": 0 }, { "date": "2023-02-28", "total": 0 }, { "date": "2023-03-01", "total": 0 }, { "date": "2023-03-02", "total": 0 }, { "date": "2023-03-03", "total": 0 }], "in": [{ "date": "2023-02-25", "total": 0 }, { "date": "2023-02-26", "total": 0 }, { "date": "2023-02-27", "total": 0 }, { "date": "2023-02-28", "total": 0 }, { "date": "2023-03-01", "total": 0 }, { "date": "2023-03-02", "total": 0 }, { "date": "2023-03-03", "total": 0 }] } } }
+  }).finally(() => {
+    if ($isOurSite) {
+      res = { data: { "code": 200, "message": { "out": [{ "date": "2023-02-25", "total": 9401 }, { "date": "2023-02-26", "total": 9028 }, { "date": "2023-02-27", "total": 10066 }, { "date": "2023-02-28", "total": 9558 }, { "date": "2023-03-01", "total": 8591 }, { "date": "2023-03-02", "total": 9522 }, { "date": "2023-03-03", "total": 3023 }], "in": [{ "date": "2023-02-25", "total": 9112 }, { "date": "2023-02-26", "total": 7931 }, { "date": "2023-02-27", "total": 8172 }, { "date": "2023-02-28", "total": 6271 }, { "date": "2023-03-01", "total": 7698 }, { "date": "2023-03-02", "total": 8413 }, { "date": "2023-03-03", "total": 394 }] } } }
     }
-    
-    echart.flowTrend1.value = tempArr1.reverse()
-    echart.flowTrend2.value = tempArr2.reverse()
+    echart.flowTrend1.value = res.data.message.in
+    echart.flowTrend2.value = res.data.message.out
     echart.flowTrend()
   })
 }
@@ -141,27 +123,23 @@ const stackerStatus = [{
   color: '#FF0404',
   text: '故障'
 }]
-function initStackerList() {
-  axios.get('/api/GetStacker').then(res => {
-    if(res.status === 200) {
-      stackerList.value = res.data.message.map(item => {
-        let status = ""
-        if(item.D_Status === '使用') {
-          status = 2
-        }
-        return {name: item.D_Name, status}
-      })
-    }
+function initStackerList () {
+  let res = {}
+  axios.get('/api/GetStacker').then(res1 => {
+    res = res1
   }).catch(() => {
-    
-    const tempArr = []
-    for(let i = 0; i <18; i++) {
-      tempArr.push({
-        name: '堆垛机' + (i + 1),
-        status : 2
-      })
+    res = { data: { "code": 200, "message": [{ "D_Name": "堆垛机17", "D_Status": "使用" }, { "D_Name": "堆垛机10", "D_Status": "使用" }, { "D_Name": "堆垛机11", "D_Status": "使用" }, { "D_Name": "堆垛机12", "D_Status": "使用" }, { "D_Name": "堆垛机13", "D_Status": "使用" }, { "D_Name": "堆垛机14", "D_Status": "使用" }, { "D_Name": "堆垛机15", "D_Status": "使用" }, { "D_Name": "堆垛机16", "D_Status": "使用" }, { "D_Name": "堆垛机18", "D_Status": "使用" }, { "D_Name": "堆垛机1", "D_Status": "使用" }, { "D_Name": "堆垛机2", "D_Status": "使用" }, { "D_Name": "堆垛机3", "D_Status": "使用" }, { "D_Name": "堆垛机4", "D_Status": "使用" }, { "D_Name": "堆垛机5", "D_Status": "使用" }, { "D_Name": "堆垛机6", "D_Status": "使用" }, { "D_Name": "堆垛机7", "D_Status": "使用" }, { "D_Name": "堆垛机8", "D_Status": "使用" }, { "D_Name": "堆垛机9", "D_Status": "使用" }] } }
+  }).finally(() => {
+    if ($isOurSite) {
+      res = { data: { "code": 200, "message": [{ "D_Name": "堆垛机17", "D_Status": "使用" }, { "D_Name": "堆垛机10", "D_Status": "使用" }, { "D_Name": "堆垛机11", "D_Status": "使用" }, { "D_Name": "堆垛机12", "D_Status": "使用" }, { "D_Name": "堆垛机13", "D_Status": "使用" }, { "D_Name": "堆垛机14", "D_Status": "使用" }, { "D_Name": "堆垛机15", "D_Status": "使用" }, { "D_Name": "堆垛机16", "D_Status": "使用" }, { "D_Name": "堆垛机18", "D_Status": "使用" }, { "D_Name": "堆垛机1", "D_Status": "使用" }, { "D_Name": "堆垛机2", "D_Status": "使用" }, { "D_Name": "堆垛机3", "D_Status": "使用" }, { "D_Name": "堆垛机4", "D_Status": "使用" }, { "D_Name": "堆垛机5", "D_Status": "使用" }, { "D_Name": "堆垛机6", "D_Status": "使用" }, { "D_Name": "堆垛机7", "D_Status": "使用" }, { "D_Name": "堆垛机8", "D_Status": "使用" }, { "D_Name": "堆垛机9", "D_Status": "使用" }] } }
     }
-    stackerList.value = tempArr
+    stackerList.value = res.data.message.map(item => {
+      let status = ""
+      if (item.D_Status === '使用') {
+        status = 2
+      }
+      return { name: item.D_Name, status }
+    })
   })
 }
 
@@ -177,26 +155,23 @@ const pickRobotStatus = [{
   color: '#FF0404',
   text: '故障'
 }]
-function initpickRobotList() {
-  axios.get('/api/GetRobot').then(res => {
-    if(res.status === 200) {
-      pickRobotList.value = res.data.message.map(item => {
-        let status = ""
-        if(item.D_Status === '使用') {
-          status = 2
-        }
-        return {name: item.D_Name, status}
-      })
-    }
+function initpickRobotList () {
+  let res = {}
+  axios.get('/api/GetRobot').then(res1 => {
+    res = res1
   }).catch(() => {
-    const tempArr = []
-    for(let i = 0; i <8; i++) {
-      tempArr.push({
-        name: '机器人' + (i + 1),
-        status : 2
-      })
+    res = { data: { "code": 200, "message": [{ "D_Name": "机器人6", "D_Status": "使用" }, { "D_Name": "机器人4", "D_Status": "使用" }, { "D_Name": "机器人5", "D_Status": "使用" }, { "D_Name": "机器人7", "D_Status": "使用" }, { "D_Name": "机器人8", "D_Status": "使用" }, { "D_Name": "机器人3", "D_Status": "使用" }, { "D_Name": "机器人2", "D_Status": "使用" }, { "D_Name": "机器人1", "D_Status": "使用" }] } }
+  }).finally(() => {
+    if ($isOurSite) {
+      res = { data: { "code": 200, "message": [{ "D_Name": "机器人6", "D_Status": "使用" }, { "D_Name": "机器人4", "D_Status": "使用" }, { "D_Name": "机器人5", "D_Status": "使用" }, { "D_Name": "机器人7", "D_Status": "使用" }, { "D_Name": "机器人8", "D_Status": "使用" }, { "D_Name": "机器人3", "D_Status": "使用" }, { "D_Name": "机器人2", "D_Status": "使用" }, { "D_Name": "机器人1", "D_Status": "使用" }] } }
     }
-    pickRobotList.value = tempArr
+    pickRobotList.value = res.data.message.map(item => {
+      let status = ""
+      if (item.D_Status === '使用') {
+        status = 2
+      }
+      return { name: item.D_Name, status }
+    })
   })
 }
 
@@ -204,20 +179,20 @@ function initpickRobotList() {
 const echart = {
   cargoInfoList: reactive({}),
   cargoInfoOption: reactive({}),
-  cargoInfo() {
-    let xLabelTemp = echart.cargoInfoList.value.out.map((item) => item.hour);
+  cargoInfo () {
+    let xLabelTemp = echart.cargoInfoList.value.out.map((item) => item.hour)
     let xLabel = []
-    let outValue = echart.cargoInfoList.value.out.map((item) => item.total);
-    let inValue = echart.cargoInfoList.value.in.map((item) => item.total);
+    let outValue = echart.cargoInfoList.value.out.map((item) => item.total)
+    let inValue = echart.cargoInfoList.value.in.map((item) => item.total)
     // 把这个逼后端传的 0 1 2改成00:00  01:00  02:00
     xLabelTemp.forEach(item => {
-      if(JSON.stringify(item).length === 1) {
+      if (JSON.stringify(item).length === 1) {
         xLabel.push('0' + item + ':00')
       } else {
         xLabel.push(item + ':00')
       }
     })
-    
+
     let option = {
       legend: {
         align: "left",
@@ -261,7 +236,7 @@ const echart = {
               fontSize: 12,
             },
             formatter: function (data) {
-              return data;
+              return data
             },
           },
           splitLine: {
@@ -299,9 +274,9 @@ const echart = {
             },
             formatter: function (value) {
               if (value === 0) {
-                return value;
+                return value
               }
-              return value;
+              return value
             },
           },
           axisTick: {
@@ -408,9 +383,9 @@ const echart = {
           data: inValue,
         },
       ],
-    };
+    }
 
-    
+
 
     echart.cargoInfoOption.value = option
   },
@@ -419,20 +394,20 @@ const echart = {
   flowTrend1: ref([]),
   flowTrend2: ref([]),
   flowTrendOption: reactive({}),
-  flowTrend() {
-    let data1 = echart.flowTrend1.value;
-    let data2 = echart.flowTrend2.value;
-    let xAxisData = [];
-    let seriesData1 = [];
-    let seriesData2 = [];
-    let maxData = [];
+  flowTrend () {
+    let data1 = echart.flowTrend1.value
+    let data2 = echart.flowTrend2.value
+    let xAxisData = []
+    let seriesData1 = []
+    let seriesData2 = []
+    let maxData = []
     for (let i = 0; i < data1.length; i++) {
-      maxData.push(100);
+      maxData.push(100)
     }
     data1.forEach((item) => {
-      xAxisData.push(item.date);
-      seriesData1.push(item.total);
-    });
+      xAxisData.push(item.date)
+      seriesData1.push(item.total)
+    })
     seriesData2 = data2.map(e => e.total)
     let option = {
       grid: {
@@ -446,8 +421,8 @@ const echart = {
         show: true,
         trigger: "axis",
         formatter: function (data) {
-          const text = `${data[0].seriesName}&nbsp;&nbsp;&nbsp;${data[0].value} <br /> ${data[1].seriesName}&nbsp;&nbsp;&nbsp;${data[1].value}`;
-          return text;
+          const text = `${data[0].seriesName}&nbsp;&nbsp;&nbsp;${data[0].value} <br /> ${data[1].seriesName}&nbsp;&nbsp;&nbsp;${data[1].value}`
+          return text
         },
       },
       legend: {
@@ -554,7 +529,7 @@ const echart = {
                     offset: 1,
                     color: "#ef9c0000",
                   },
-                ]);
+                ])
               },
               opacity: 0.8,
             },
@@ -576,10 +551,10 @@ const echart = {
           barGap: "-100%", // Make series be overlap
         },
       ],
-    };
-    echart.flowTrendOption.value = option;
+    }
+    echart.flowTrendOption.value = option
   },
-};
+}
 </script>
 
 <style lang="less" scoped>
@@ -598,11 +573,11 @@ const echart = {
 .chunk2 {
   width: 32.31vw;
   background: url("./assets/2d/images/digitalReservoirArea/chartBG5.png") no-repeat left top / 100% 100%;
-  
+
   &-body {
     height: 100%;
     width: 100%;
-    padding: 4% 0.52vw 2% 0.52vw;
+    padding: 2.2vh 0.52vw 1.6vh 0.52vw;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -620,7 +595,8 @@ const echart = {
     height: 5.38vh;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;;
+    justify-content: space-between;
+    ;
     align-items: center;
     color: #FFF;
     font-size: 0.63vw;
@@ -647,7 +623,7 @@ const echart = {
   &-body {
     height: 96%;
     width: 100%;
-    padding: 3% 1.04vw 2% 1.04vw;
+    padding: 1.6vh 0.5vw 0.8vh 0.5vw;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -667,7 +643,7 @@ const echart = {
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;;
+    justify-content: space-between;
     align-items: center;
     color: #FFF;
     font-size: 0.63vw;
@@ -678,10 +654,10 @@ const echart = {
       height: 100%;
       width: 2.5vw;
     }
-    
+
     p {
       position: absolute;
-      top: 70%;
+      bottom: 5%;
     }
   }
 }
@@ -695,9 +671,11 @@ const echart = {
   0% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(30%);
   }
+
   100% {
     transform: translateY(0);
   }

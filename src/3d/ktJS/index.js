@@ -350,7 +350,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
           }
         })
       } else if (model.name == 'jshepda') {
-        // console.log('model', model)
+        // 
 
         // mesh instance
         model.traverse((child) => {
@@ -452,7 +452,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
         //   }
         // })
       } else if (model.name == 'huanxian') {
-        console.log('model', model)
+        
 
         // mesh instance
         // model.traverse((child) => {
@@ -501,7 +501,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
         //   }
         // })
       } else if (model.name == 'dipi-1') {
-        console.log('model: ', model);
+        
 
       }
     },
@@ -509,7 +509,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
       CACHE.container = evt
       window.container = evt
 
-      console.log('CACHE', CACHE.instanceTransformInfo, CACHE.instanceMeshInfo, CACHE.removed)
+      
 
       // remove unused obj3d
       for (const i in CACHE.removed) {

@@ -1,7 +1,10 @@
 * {
   margin: 0;
   user-select: none;
+  box-sizing: border-box;
+  padding: 0;
 }
+
 
 .dg.ac {
   z-index: 1 !important;

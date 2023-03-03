@@ -1,9 +1,9 @@
 
 <template>
-  <div class="body-box">
+  <!-- <div class="body-box">
     <Header></Header>
     <router-view></router-view>
-  </div>
+      </div> -->
   <canvas ref="sceneEl" class="sceneEl"></canvas>
 </template>
 
@@ -29,7 +29,7 @@ onMounted(() => {
   height: 100vh;
   z-index: 2;
   pointer-events: none;
-  background: url("./assets/2d/images/mask.png") center / 100% 100% no-repeat;
+  // background: url("./assets/2d/images/mask.png") center / 100% 100% no-repeat;
 }
 
 .sceneEl {

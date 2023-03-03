@@ -21,8 +21,10 @@
 
 <script setup>
 import Right from "@/2d/components/Right.vue"
-import axios from "axios";
-import { ref, reactive, onMounted } from "vue";
+import axios from "axios"
+import { ref, reactive, onMounted, getCurrentInstance } from "vue"
+const { appContext: { app: { config: { globalProperties: { $isOurSite } } } } } = getCurrentInstance()
+
 
 onMounted(() => {
   getStockRatio()
@@ -48,34 +50,26 @@ const padStore = ref([
   },
 ])
 
-function getStockRatio() {
-  axios.get('/api/GetInventoryRatio').then(res => {
-    echart.phoneRateList.value = []
-    if (res.status === 200) {
-      padStore.value[0].value = res.data.message.堆垛机1
-      padStore.value[1].value = res.data.message.堆垛机2
-
-      delete res.data.message.堆垛机1
-      delete res.data.message.堆垛机2
-      const newArr = []
-      for (let key in res.data.message) {
-        newArr.push({
-          id: key.replace("堆垛机", ""),
-          value: res.data.message[key]
-        })
-      }
-      echart.phoneRateList.value = newArr
-      echart.phoneRateChart()
-    }
+function getStockRatio () {
+  let res = {}
+  axios.get('/api/GetInventoryRatio').then(res1 => {
+    res = res1
   }).catch(() => {
-    padStore.value[0].value = '0.00'
-    padStore.value[1].value = '0.00'
-
+    res = { data: { "code": 200, "message": { "堆垛机1": 0, "堆垛机2": 0, "堆垛机3": 0, "堆垛机4": 0, "堆垛机5": 0, "堆垛机6": 0, "堆垛机7": 0, "堆垛机8": 0, "堆垛机9": 0, "堆垛机10": 0, "堆垛机11": 0, "堆垛机12": 0, "堆垛机13": 0, "堆垛机14": 0, "堆垛机15": 0, "堆垛机16": 0, "堆垛机17": 0, "堆垛机18": 0 } } }
+  }).finally(() => {
+    if ($isOurSite) {
+      res = { data: { "code": 200, "message": { "堆垛机1": 52, "堆垛机2": 51, "堆垛机3": 67, "堆垛机4": 69, "堆垛机5": 67, "堆垛机6": 69, "堆垛机7": 67, "堆垛机8": 68, "堆垛机9": 68, "堆垛机10": 67, "堆垛机11": 67, "堆垛机12": 67, "堆垛机13": 67, "堆垛机14": 69, "堆垛机15": 67, "堆垛机16": 66, "堆垛机17": 67, "堆垛机18": 67 } } }
+    }
+    echart.phoneRateList.value = []
+    padStore.value[0].value = res.data.message.堆垛机1
+    padStore.value[1].value = res.data.message.堆垛机2
+    delete res.data.message.堆垛机1
+    delete res.data.message.堆垛机2
     const newArr = []
-    for (let i = 1; i < 17; i++) {
+    for (let key in res.data.message) {
       newArr.push({
-        id: i,
-        value: 17 - i
+        id: key.replace("堆垛机", ""),
+        value: res.data.message[key]
       })
     }
     echart.phoneRateList.value = newArr
@@ -89,18 +83,18 @@ function getStockRatio() {
 const echart = {
   phoneRateList: ref([]),
   phoneRateOption: reactive({}),
-  phoneRateChart() {
-    const datas = echart.phoneRateList.value;
+  phoneRateChart () {
+    const datas = echart.phoneRateList.value
 
-    const myColor = "#EF9C00";
-    const xData = datas.map((item) => item.id);
-    const yData = datas.map((item) => item.value);
-    const yDataR = JSON.parse(JSON.stringify(yData)).reverse();
+    const myColor = "#EF9C00"
+    const xData = datas.map((item) => item.id)
+    const yData = datas.map((item) => item.value)
+    const yDataR = JSON.parse(JSON.stringify(yData)).reverse()
 
-    const max = 100;
-    let maxData = [];
+    const max = 100
+    let maxData = []
     for (let i = 0; i < echart.phoneRateList.value.length; i++) {
-      maxData.push(max);
+      maxData.push(max)
     }
 
     let option = {
@@ -159,8 +153,8 @@ const echart = {
         },
         formatter: function (data) {
           const text = `${xData[data[0].dataIndex]} 号库<br /> ${data[1].marker
-            } ${data[1].data}%`;
-          return text;
+            } ${data[1].data}%`
+          return text
         },
       },
       series: [
@@ -185,7 +179,7 @@ const echart = {
             color: "#fff",
             fontWeight: "bold",
             formatter: function (data) {
-              return xData[data.dataIndex];
+              return xData[data.dataIndex]
             },
             align: "center",
             verticalAlign: "middle",
@@ -242,7 +236,7 @@ const echart = {
           animationDuration: 1000,
         },
       ],
-    };
+    }
 
     echart.phoneRateOption.value = option
   },

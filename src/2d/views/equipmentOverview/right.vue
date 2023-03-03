@@ -70,62 +70,54 @@ import Parallelogram from '@/2d/components/Parallelogram.vue'
 import * as echarts from 'echarts'
 import Right from "@/2d/components/Right.vue"
 import Marquee from "@/2d/components/Marquee.vue"
-import { ref, reactive, onMounted, nextTick } from "vue"
+import { ref, reactive, onMounted, nextTick, getCurrentInstance } from "vue"
+const { appContext: { app: { config: { globalProperties: { $isOurSite } } } } } = getCurrentInstance()
+
 // import { cameraMove } from '@/3d/main.ts'
 
 let equipmentOverviewList = ref([])
 const equipmentOverviewName = ["机器人", "堆垛机", "入库线", "多品分拣线", "单品分拣线", "库位"]
 function initEquipmentOverviewList () {
-  axios.get('/api/GetEquipmentCount').then(res => {
-    if (res.status === 200) {
-      const tempArr = []
-      for (let key in res.data.message) {
-        if (key != "空箱补给线")
-          tempArr.push({
-            name: key,
-            value: res.data.message[key]
-          })
-      }
-      equipmentOverviewList.value = tempArr
-    }
+  let res = {}
+  axios.get('/api/GetEquipmentCount').then(res1 => {
+    res = res1
   }).catch(() => {
+    res = { data: { "code": 200, "message": { "机器人": 0, "堆垛机": 0, "入库线": 0, "多品分拣线": 0, "单品分拣线": 0, "空箱补给线": 0, "库位": 0 } } }
+  }).finally(() => {
+    if ($isOurSite) {
+      res = { data: { "code": 200, "message": { "机器人": 8, "堆垛机": 18, "入库线": 1, "多品分拣线": 1, "单品分拣线": 1, "空箱补给线": 1, "库位": 45336 } } }
+    }
     const tempArr = []
-    for (let i = 0; i < equipmentOverviewName.length; i++) {
-      tempArr.push({
-        name: equipmentOverviewName[i],
-        value: 0
-      })
+    for (let key in res.data.message) {
+      if (key != "空箱补给线")
+        tempArr.push({
+          name: key,
+          value: res.data.message[key]
+        })
     }
     equipmentOverviewList.value = tempArr
   })
 }
 
 function handleAbnormal (item) {
-  console.log(item)
+
   cameraMove('jxsb1')
 }
 
 let alarmList = ref([])
 let marqueenShow = ref(false)
 function initAlarmListList () {
-  axios.get('/api/GetAbnormal').then(res => {
-    if (res.status === 200) {
-      marqueenShow.value = false
-      alarmList.value = res.data.message.data
-      nextTick(() => {
-        marqueenShow.value = true
-      })
-    }
+  let res = {}
+  axios.get('/api/GetAbnormal').then(res1 => {
+    res = res1
   }).catch(() => {
-    const tempArr = []
-    for (let i = 0; i < 20; i++) {
-      tempArr.push({
-        equ: '设备1',
-        describe: '异常1',
-        date: '2023-01-01 00:00:01'
-      })
+    res = { data: { "code": 200, "message": [] } }
+  }).finally(() => {
+    if ($isOurSite) {
+      res = { data: { "code": 200, "message": { "count": 1704, "data": [{ "equ": "设备1", "describe": "异常1", "date": "2022-12-2120:17:29" }, { "equ": "设备1", "describe": "异常1", "date": "2022-12-2120:17:29" }, { "equ": "设备1", "describe": "异常1", "date": "2022-12-2120:17:30" }, { "equ": "设备1", "describe": "异常1", "date": "2022-12-2120:18:35" }, { "equ": "设备1", "describe": "异常1", "date": "2022-12-2120:18:37" }, { "equ": "设备1", "describe": "异常1", "date": "2022-12-2120:18:38" }, { "equ": "设备1", "describe": "异常1", "date": "2022-12-2120:18:58" }, { "equ": "设备1", "describe": "异常1", "date": "2022-12-2120:18:58" }, { "equ": "设备1", "describe": "异常1", "date": "2022-12-2120:18:58" }, { "equ": "设备1", "describe": "异常1", "date": "2022-12-2120:18:58" }, { "equ": "设备1", "describe": "异常1", "date": "2022-12-2120:18:59" }, { "equ": "设备1", "describe": "异常1", "date": "2022-12-2120:18:59" }, { "equ": "设备1", "describe": "异常1", "date": "2022-12-2120:18:59" }, { "equ": "设备1", "describe": "异常1", "date": "2022-12-2120:18:59" }, { "equ": "设备1", "describe": "异常1", "date": "2022-12-2120:18:59" }] } } }
     }
-    alarmList.value = tempArr
+    marqueenShow.value = false
+    alarmList.value = res.data.message.data
     nextTick(() => {
       marqueenShow.value = true
     })
@@ -135,26 +127,34 @@ function initAlarmListList () {
 
 const faultTop5Color = ['#FB255D', '#FF8C26', '#FFF601', '#29FF47', '#38F2D1']
 function getFaultTop5List () {
-  axios.get('/api/GetAbnormalRatio').then(res => {
-    if (res.status === 200) {
-      const tempArr = res.data.message
-      tempArr.forEach(e => {
-        e.total = e.total.toFixed(2)
-      })
-      for (let i = 0; i < 5 - tempArr.length + 2; i++) {
-        tempArr.push({ equName: "", total: "0" })
-      }
-      echart.faultTop5List.value = tempArr.reverse()
-      echart.faultTop5Chart()
-    }
+  let res = {}
+  axios.get('/api/GetAbnormalRatio').then(res1 => {
+    res = res1
   }).catch(() => {
-    echart.faultTop5List.value = []
-    for (let i = 1; i < 6; i++) {
-      echart.faultTop5List.value.push({ equName: '未知', total: '0.0' })
-      echart.faultTop5Chart()
+    res = { data: { "code": 200, "message": [] } }
+  }).finally(() => {
+    if ($isOurSite) {
+      res = { data: { "code": 200, "message": [{ "equName": "设备1", "total": 7.981220657276995305164319249 }, { "equName": "入库扫码", "total": 76.525821596244131455399061033 }, { "equName": "平板侧扫站台", "total": 15.434272300469483568075117371 }, { "equName": "手机侧扫站台", "total": 0.0586854460093896713615023474 }] } }
     }
+    const tempArr = res.data.message
+
+    tempArr.sort((a, b) => {
+      return a.total > b.total ? -1 : 1
+    })
+
+    tempArr.forEach(e => {
+      e.total = e.total.toFixed(2)
+    })
+
+    for (let i = 0, j = tempArr.length; i < (5 - j); i++) {
+      tempArr.push({ equName: "未知", total: "0.00" })
+    }
+
+    echart.faultTop5List.value = tempArr.reverse()
+    echart.faultTop5Chart()
   })
 }
+
 
 onMounted(() => {
   initAlarmListList()
