@@ -21,29 +21,29 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import { getDate } from "@/2d/assets/js/dateTimeWeater";
+import { ref, onMounted, onUnmounted } from "vue"
+import { getDate } from "@/2d/assets/js/dateTimeWeater"
 import Navbar from "./Navbar.vue"
 
-let timer = "";
+let timer = ""
 const weather = {
   city: '重庆',
   weather: "多云",
   min: "10",
   max: "18",
-};
-let dataTime = ref("");
+}
+let dataTime = ref("")
 
 onMounted(() => {
   timer = setInterval(async () => {
-    dataTime.value = await getDate();
-  }, 1000);
-});
+    dataTime.value = await getDate()
+  }, 1000)
+})
 
 onUnmounted(() => {
-  console.log("页面/组件退出，触发了onUnmounted钩子函数");
-  clearInterval(timer);
-});
+  console.log("页面/组件退出，触发了onUnmounted钩子函数")
+  clearInterval(timer)
+})
 </script>
 
 <style lang="less" scoped>
@@ -79,6 +79,8 @@ onUnmounted(() => {
       font-family: 'YouSheBiaoTiHei';
       font-weight: 400;
     }
+
+
   }
 
   &-right {
@@ -87,7 +89,7 @@ onUnmounted(() => {
     justify-content: end;
     margin: 1.24vh 2.5vw 0 0;
     font-size: 0.625vw;
-    
+
     p {
       font-size: 0.625vw;
       margin-left: 0.83vw;

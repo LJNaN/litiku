@@ -2,7 +2,7 @@
   <div class="main">
     <Left></Left>
     <Right></Right>
-    <!-- <Bottom></Bottom> -->
+    <Bottom></Bottom>
   </div>
 </template>
 
@@ -11,7 +11,7 @@
 
 import Left from "@/2d/views/equipmentOverview/left.vue"
 import Right from "@/2d/views/equipmentOverview/right.vue"
-// import Bottom from "@/2d/views/equipmentOverview/bottom.vue"
+import Bottom from "@/2d/views/equipmentOverview/bottom.vue"
 
 </script>
 

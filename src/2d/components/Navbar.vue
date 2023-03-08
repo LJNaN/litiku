@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch } from "vue"
 import router from "@/2d/router/index"
 
 const navShow = ref(false)
@@ -29,7 +29,7 @@ const navList = [{
   path: '/ordertask'
 }]
 
-function handleNav(index) {
+function handleNav (index) {
   activeNavIndex.value = index
   router.push(navList[index].path)
 }
@@ -59,6 +59,7 @@ watch(() => router.currentRoute.value.path, newValue => {
   .left,
   .center,
   .right {
+    pointer-events: all;
     position: absolute;
     color: #8C8C8C;
     font-size: 1.04vw;

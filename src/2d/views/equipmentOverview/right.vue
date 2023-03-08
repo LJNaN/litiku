@@ -71,9 +71,9 @@ import * as echarts from 'echarts'
 import Right from "@/2d/components/Right.vue"
 import Marquee from "@/2d/components/Marquee.vue"
 import { ref, reactive, onMounted, nextTick, getCurrentInstance } from "vue"
+import { cameraMove } from '@/3d/ktJS/API.js'
 const { appContext: { app: { config: { globalProperties: { $isOurSite } } } } } = getCurrentInstance()
 
-// import { cameraMove } from '@/3d/main.ts'
 
 let equipmentOverviewList = ref([])
 const equipmentOverviewName = ["机器人", "堆垛机", "入库线", "多品分拣线", "单品分拣线", "库位"]
@@ -164,9 +164,9 @@ onMounted(() => {
 
   // 30s update
   setInterval(() => {
-    // initAlarmListList()
-    // initEquipmentOverviewList()
-    // getFaultTop5List()
+    initAlarmListList()
+    initEquipmentOverviewList()
+    getFaultTop5List()
   }, 30000)
 })
 
@@ -388,6 +388,10 @@ const echart = {
     font-size: 0.63vw;
 
     &-marquee {
+      * {
+        pointer-events: all;
+      }
+
       ::v-deep .scroll_table {
         margin-top: 1.04vh;
       }

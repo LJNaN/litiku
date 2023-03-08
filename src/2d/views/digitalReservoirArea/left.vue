@@ -48,7 +48,7 @@ onMounted(() => {
 
 // 30s update
 setInterval(() => {
-  // getStockStatus()
+  getStockStatus()
 }, 30000)
 
 // 库存状态

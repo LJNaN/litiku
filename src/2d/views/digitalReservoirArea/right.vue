@@ -33,7 +33,7 @@ onMounted(() => {
 
 // 30s update
 setInterval(() => {
-  // getStockRatio()
+  getStockRatio()
 }, 30000)
 
 

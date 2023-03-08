@@ -176,9 +176,9 @@ onMounted(() => {
 
   // 30s update
   setInterval(() => {
-    // initStackerList()
-    // initEfficiencyList()
-    // initPickRobotList()
+    initStackerList()
+    initEfficiencyList()
+    initPickRobotList()
   }, 30000)
 })
 </script>

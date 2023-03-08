@@ -1,6 +1,7 @@
 .viewPopup {
-    width : 276px;
-    height: auto;
+    z-index: 2;
+    width  : 276px;
+    height : auto;
 
     .viewPopup-head {
         width       : 100%;
@@ -15,14 +16,15 @@
         text-shadow : 0px 2px 0px rgba(0, 9, 17, 0.34);
 
         .viewPopup-close {
-            width     : 20px;
-            height    : 20px;
-            background: url('./close.png') no-repeat center / 100% 100%;
-            position  : absolute;
-            top       : 50%;
-            margin-top: -10px;
-            right     : 6px;
-            cursor    : pointer;
+            pointer-events: all;
+            width         : 20px;
+            height        : 20px;
+            background    : url('./close.png') no-repeat center / 100% 100%;
+            position      : absolute;
+            top           : 50%;
+            margin-top    : -10px;
+            right         : 6px;
+            cursor        : pointer;
         }
     }
 
@@ -49,7 +51,18 @@
     }
 }
 
+.popup1 {
+    background-color: #B3B3B3;
+}
+
+* {
+    pointer-events: none;
+}
 
 .dg.ac {
     z-index: 10 !important;
+}
+
+.chunk div {
+    pointer-events: all;
 }

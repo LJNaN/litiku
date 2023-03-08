@@ -69,10 +69,10 @@ onMounted(() => {
 
 // 30s update
 setInterval(() => {
-  // initCargoInfoList()
-  // initFlowTrend()
-  // initStackerList()
-  // initpickRobotList()
+  initCargoInfoList()
+  initFlowTrend()
+  initStackerList()
+  initpickRobotList()
 }, 30000)
 
 // 日吞吐量

@@ -11,7 +11,7 @@
 
 <script setup>
 import Bottom from "@/2d/components/Bottom.vue"
-// import {showModel} from '@/3d/main';
+import { showModel } from '@/3d/ktJS/API.js'
 import { ref } from "vue"
 
 let activeIndex = ref(-1)
@@ -42,6 +42,7 @@ function handleNav (index) {
     display: flex;
     justify-content: center;
     align-items: center;
+    pointer-events: all;
   }
 
   .active {
