@@ -567,12 +567,12 @@ const echart = {
 
 .chunk1 {
   width: 20.84vw;
-  background: url("./assets/2d/images/digitalReservoirArea/chartBG4.png") no-repeat left top / 100% 100%;
+  background: url("/assets/2d/images/digitalReservoirArea/chartBG4.png") no-repeat left top / 100% 100%;
 }
 
 .chunk2 {
   width: 32.31vw;
-  background: url("./assets/2d/images/digitalReservoirArea/chartBG5.png") no-repeat left top / 100% 100%;
+  background: url("/assets/2d/images/digitalReservoirArea/chartBG5.png") no-repeat left top / 100% 100%;
 
   &-body {
     height: 100%;
@@ -618,7 +618,7 @@ const echart = {
 
 .chunk3 {
   width: 20.01vw;
-  background: url("./assets/2d/images/digitalReservoirArea/chartBG6.png") no-repeat left top / 100% 100%;
+  background: url("/assets/2d/images/digitalReservoirArea/chartBG6.png") no-repeat left top / 100% 100%;
 
   &-body {
     height: 96%;
@@ -664,7 +664,7 @@ const echart = {
 
 .chunk4 {
   width: 24.18vw;
-  background: url("./assets/2d/images/digitalReservoirArea/chartBG7.png") no-repeat left top / 100% 100%;
+  background: url("/assets/2d/images/digitalReservoirArea/chartBG7.png") no-repeat left top / 100% 100%;
 }
 
 @keyframes ups-and-downs {

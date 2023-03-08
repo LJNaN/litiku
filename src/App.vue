@@ -15,6 +15,7 @@ import { sceneOnLoad } from '@/3d/ktJS/index.js'
 
 const sceneEl = ref(null)
 
+
 onMounted(() => {
   sceneOnLoad({ domElement: sceneEl.value })
   // new DevicePixelRatio().init();
@@ -29,7 +30,7 @@ onMounted(() => {
   height: 100vh;
   z-index: 2;
   pointer-events: none;
-  background: url("./assets/2d/images/mask.png") center / 100% 100% no-repeat;
+  background: url("/assets/2d/images/mask.png") center / 100% 100% no-repeat;
 }
 
 .sceneEl {

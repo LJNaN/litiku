@@ -54,8 +54,8 @@ onUnmounted(() => {
   justify-content: space-between;
   width: 100%;
   height: 11.8vh;
-  background: url("./assets/2d/images/top.png") top / 100% 6vh no-repeat,
-    url("./assets/2d/images/dingbu.png") top / 38.46vw 11.8vh no-repeat;
+  background: url("/assets/2d/images/top.png") top / 100% 6vh no-repeat,
+    url("/assets/2d/images/dingbu.png") top / 38.46vw 11.8vh no-repeat;
   color: #ffffff;
 
   &-left {

@@ -72,8 +72,8 @@ function getStockStatus () {
 
 <style lang="less" scoped>
 .left {
-  background: url("./assets/2d/images/digitalReservoirArea/cebian.png") left / 0.21vw 100% no-repeat,
-    url("./assets/2d/images/digitalReservoirArea/yuandian.png") left center / 0.21vw 2.59vh no-repeat;
+  background: url("/assets/2d/images/digitalReservoirArea/cebian.png") left / 0.21vw 100% no-repeat,
+    url("/assets/2d/images/digitalReservoirArea/yuandian.png") left center / 0.21vw 2.59vh no-repeat;
 }
 
 .left-status {

@@ -247,7 +247,7 @@ const echart = {
 <style lang="less" scoped>
 .chunk1 {
   height: 14.3vh;
-  background: url("./assets/2d/images/digitalReservoirArea/chartBG3.png") no-repeat left top / 100% 100%;
+  background: url("/assets/2d/images/digitalReservoirArea/chartBG3.png") no-repeat left top / 100% 100%;
 
   .chunk1-body {
     display: flex;
@@ -287,6 +287,6 @@ const echart = {
 .chunk2 {
   margin-top: 0.83vh;
   height: calc(100% - 14.3vh - 0.83vh);
-  background: url("./assets/2d/images/digitalReservoirArea/chartBG2.png") no-repeat left top / 100% 100%;
+  background: url("/assets/2d/images/digitalReservoirArea/chartBG2.png") no-repeat left top / 100% 100%;
 }
 </style>

@@ -186,7 +186,7 @@ onMounted(() => {
 <style lang="less" scoped>
 .chunk1 {
   height: 43vh;
-  background: url('./assets/2d/images/equipmentOverview/chartBG1.png') center / 100% 100% no-repeat;
+  background: url('/assets/2d/images/equipmentOverview/chartBG1.png') center / 100% 100% no-repeat;
 
   .chunk1-body {
     display: flex;
@@ -239,7 +239,7 @@ onMounted(() => {
 .chunk2 {
   margin-top: 1.04vh;
   height: 16vh;
-  background: url('./assets/2d/images/equipmentOverview/chartBG2.png') center / 100% 100% no-repeat;
+  background: url('/assets/2d/images/equipmentOverview/chartBG2.png') center / 100% 100% no-repeat;
 
   .chunk2-body {
     display: flex;
@@ -266,7 +266,7 @@ onMounted(() => {
         align-items: center;
         width: 9.74vw;
         height: 4.14vh;
-        background: url('./assets/2d/images/equipmentOverview/efficiency-bg.png') center / 100% 100% no-repeat;
+        background: url('/assets/2d/images/equipmentOverview/efficiency-bg.png') center / 100% 100% no-repeat;
 
         &-circular {
           position: absolute;
@@ -306,7 +306,7 @@ onMounted(() => {
 .chunk3 {
   margin-top: 1.04vh;
   height: 29vh;
-  background: url('./assets/2d/images/equipmentOverview/chartBG3.png') center / 100% 100% no-repeat;
+  background: url('/assets/2d/images/equipmentOverview/chartBG3.png') center / 100% 100% no-repeat;
 
   .chunk3-body {
     display: flex;

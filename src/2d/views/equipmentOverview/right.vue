@@ -328,7 +328,7 @@ const echart = {
 <style lang="less" scoped>
 .chunk1 {
   height: 24vh;
-  background: url('./assets/2d/images/equipmentOverview/chartBG4.png') center / 100% 100% no-repeat;
+  background: url('/assets/2d/images/equipmentOverview/chartBG4.png') center / 100% 100% no-repeat;
 
   .chunk1-body {
     display: flex;
@@ -378,7 +378,7 @@ const echart = {
 .chunk2 {
   height: 40vh;
   margin-top: 1.04vh;
-  background: url('./assets/2d/images/equipmentOverview/chartBG5.png') center / 100% 100% no-repeat;
+  background: url('/assets/2d/images/equipmentOverview/chartBG5.png') center / 100% 100% no-repeat;
 
   &-body {
     padding: 2.08vh 0.52vw 1.04vh 0.52vw;
@@ -402,10 +402,10 @@ const echart = {
         .th_tr {
           height: 3.73vh;
           width: 19.8vw;
-          background: url('./assets/2d/images/equipmentOverview/alarm-head-bg.png') center / 100% 100% no-repeat;
+          background: url('/assets/2d/images/equipmentOverview/alarm-head-bg.png') center / 100% 100% no-repeat;
 
           .th {
-            background: url('./assets/2d/images/equipmentOverview/alert-button-bg.png') center / 4.69vw 2.48vh no-repeat;
+            background: url('/assets/2d/images/equipmentOverview/alert-button-bg.png') center / 4.69vw 2.48vh no-repeat;
           }
         }
 
@@ -413,7 +413,7 @@ const echart = {
           cursor: pointer;
           height: 4.14vh;
           width: 19.8vw;
-          background: url('./assets/2d/images/equipmentOverview/alarm-raw-bg.png') center / 100% 9.73vh no-repeat;
+          background: url('/assets/2d/images/equipmentOverview/alarm-raw-bg.png') center / 100% 9.73vh no-repeat;
         }
 
         .td {
@@ -453,7 +453,7 @@ const echart = {
 .chunk3 {
   margin-top: 1.04vh;
   height: 24.6vh;
-  background: url('./assets/2d/images/equipmentOverview/chartBG6.png') center / 100% 100% no-repeat;
+  background: url('/assets/2d/images/equipmentOverview/chartBG6.png') center / 100% 100% no-repeat;
 
   &-body {
     height: 100%;

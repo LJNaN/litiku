@@ -35,7 +35,7 @@ function handleNav (index) {
     cursor: pointer;
     width: 8.34vw;
     height: 5.8vh;
-    background: url('./assets/2d/images/equipmentOverview/bottombg.png') center / 100% 100% no-repeat;
+    background: url('/assets/2d/images/equipmentOverview/bottombg.png') center / 100% 100% no-repeat;
     color: #FFF;
     font-family: 'YouSheBiaoTiHei';
     font-size: 1.15vw;
@@ -46,7 +46,7 @@ function handleNav (index) {
   }
 
   .active {
-    background: url('./assets/2d/images/equipmentOverview/bottombg-active.png') center / 100% 100% no-repeat;
+    background: url('/assets/2d/images/equipmentOverview/bottombg-active.png') center / 100% 100% no-repeat;
   }
 }
 </style>

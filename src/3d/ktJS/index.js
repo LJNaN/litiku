@@ -85,7 +85,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
       supersampling: false
     },
     gammaEnabled: true,
-    stats: true,
+    stats: false,
     // loadingBar: {
     //   show: true,
     //   type: 10
@@ -583,11 +583,12 @@ export const sceneOnLoad = ({ domElement, callback }) => {
 
         model.traverse(child => {
           if (child.name == "dipi" && child.isMesh) {
+
             child.material.encoding = Bol3D.sRGBEncoding
             child.material.emissive.set('#141313')
             child.material.color.set('#141313')
-            child.material.roughness = 0.5
-            child.material.metalness = 0.5
+            child.material.roughness = 0.4
+            child.material.metalness = 0.3
             // child.material.transparent = true
             // child.material.opacity = 0.5
           }
@@ -669,6 +670,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
       // API.addReflector()
 
 
+
       // remove unused obj3d
       for (const i in CACHE.removed) {
         const removed = CACHE.removed[i]
@@ -691,7 +693,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
         // CACHE.outsideScene.push(instanceMesh);
       }
 
-      API.loadGUI()
+      // API.loadGUI()
       API.getData()
       API.initEvent()
       container.clickObjects = STATE.tempClickObjects

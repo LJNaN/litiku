@@ -91,7 +91,7 @@ watch(() => router.currentRoute.value.path, newValue => {
 
   .active {
     color: #FFF;
-    background: url('./assets/2d/images/navHighLight.png') center / 100% 100% no-repeat;
+    background: url('/assets/2d/images/navHighLight.png') center / 100% 100% no-repeat;
   }
 }
 
