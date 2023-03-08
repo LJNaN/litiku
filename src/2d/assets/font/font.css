@@ -1,12 +1,13 @@
-
 @font-face {
   font-family: 'lianmengqiyilushuaizhengruiheiti';
-  src: url('联盟起艺卢帅正锐黑体.ttf') format('truetype')
+  src: url('lianmengqiyilushuaizhengruiheiti.ttf') format('truetype')
 }
+
 @font-face {
   font-family: 'YouSheBiaoTiHei';
-  src: url('优设标题黑.ttf') format('truetype')
+  src: url('YouSheBiaoTiHei.ttf') format('truetype')
 }
+
 @font-face {
   font-family: 'SourceHanSansSC-Regular';
   src: url('SourceHanSansSC-Regular.otf')

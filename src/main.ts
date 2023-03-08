@@ -12,7 +12,7 @@ import '@/2d/assets/font/font.css'
 
 
 const app = createApp(App)
-app.config.globalProperties.$isOurSite = false  // 控制是否是官网数据
+app.config.globalProperties.$isOurSite = true  // 控制是否是官网数据
 
 
 app.component(Chart.name, Chart);
