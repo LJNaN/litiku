@@ -4,7 +4,9 @@
     <Header></Header>
     <router-view></router-view>
   </div>
-  <canvas ref="sceneEl" class="sceneEl"></canvas>
+  <div style="width: 100vw;height: 100vh;">
+    <canvas ref="sceneEl" class="sceneEl"></canvas>
+  </div>
 </template>
 
 <script setup>
@@ -12,6 +14,32 @@
 import Header from "@/2d/components/Header.vue"
 import { onMounted, ref } from 'vue'
 import { sceneOnLoad } from '@/3d/ktJS/index.js'
+
+/***
+ *                    _ooOoo_
+ *                   o8888888o
+ *                   88" . "88
+ *                   (| -_- |)
+ *                    O\ = /O
+ *                ____/`---'\____
+ *              .   ' \\| |// `.
+ *               / \\||| : |||// \
+ *             / _||||| -:- |||||- \
+ *               | | \\\ - /// | |
+ *             | \_| ''\---/'' | |
+ *              \ .-\__ `-` ___/-. /
+ *           ___`. .' /--.--\ `. . __
+ *        ."" '< `.___\_<|>_/___.' >'"".
+ *       | | : `- \`.;`\ _ /`;.`/ - ` : | |
+ *         \ \ `-. \_ __\ /__ _/ .-` / /
+ * ======`-.____`-.___\_____/___.-`____.-'======
+ *                    `=---='
+ *
+ * .............................................
+ *          佛祖保佑             永无BUG
+ */
+
+
 
 const sceneEl = ref(null)
 

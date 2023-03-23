@@ -3,8 +3,8 @@ import { CACHE } from './CACHE.js'
 
 const PUBLIC_PATH = './assets/3d'
 const initialState = {
-  position: { x: -14.5, y: 16, z: 4.7 },
-  target: { x: 0, y: 8, z: 0 }
+  position: { x: -24.8, y: 19.8, z: 8.93 },
+  target: { x: 0, y: 0, z: 0 }
 }
 
 let rkPasue = false,
@@ -21,19 +21,59 @@ const lineObjects = {},
   danBoxArr = [], // 单品出库数组
   duoBoxArr = [], // 多品出库
   loopBoxArr = [], // 循环线
-  ckBoxArr = [], // 堆垛机读取到出库指令之后，还没到侧扫的时候的临时数组
+  danCkBoxArr = [], // 堆垛机读取到出库指令之后，还没到侧扫的时候的临时数组  (单品)
   scan = {},
+  lianjie = null, // 环线上的连接
   sceneModel = {},
   // 单品打包台
   danPack = [{
-    index: 825,
-    index2: 860
+    index: 758,
+    destName: 2647,
+    index2: 831
   }, {
-    index: 890,
-    index2: 905
+    index: 774,
+    destName: 2648,
+    index2: 842
   }, {
-    index: 950,
-    index2: 947
+    index: 790,
+    destName: 2649,
+    index2: 854
+  }, {
+    index: 806,
+    destName: 2650,
+    index2: 866
+  }, {
+    index: 822,
+    destName: 2651,
+    index2: 877
+  }, {
+    index: 838,
+    destName: 2652,
+    index2: 889
+  }, {
+    index: 855,
+    destName: 2653,
+    index2: 900
+  }, {
+    index: 871,
+    destName: 2654,
+    index2: 912
+  }, {
+    index: 887,
+    destName: 2655,
+    index2: 923
+  }, {
+    index: 904,
+    destName: 2656,
+    index2: 935
+  }, {
+    index: 919,
+    destName: 2657,
+    index2: 946
+  }, {
+    index: 936,
+    destName: 2658,
+    index2: 958
   }],
   // 多品打包台
   duoPack = [{
@@ -307,7 +347,7 @@ const lineObjects = {},
     danIndex: 575,
     duoIndex: 1116,
     name: '1046',
-    machine: 'dong018_(1)',
+    machine: 'dong018',
     baffle: 'dangban033',
     machineStatus: true,
     baffleStatus: true
@@ -408,82 +448,82 @@ const lineObjects = {},
     index2: 729
   }],
   loopRoadway = [{
-    tuopan: null,
+    liaoxiang: null,
     boxArr: [],
     position: [7.71920729, 0.825012267, -2.11484385],
     index: 193
   }, {
-    tuopan: null,
+    liaoxiang: null,
     boxArr: [],
     position: [9.449254, 0.825012267, -2.11484385],
     index: 247
   }, {
-    tuopan: null,
+    liaoxiang: null,
     boxArr: [],
     position: [10.5863562, 0.825012267, -2.11484385],
     index: 283
   }, {
-    tuopan: null,
+    liaoxiang: null,
     boxArr: [],
     position: [12.3164034, 0.825012267, -2.11484385],
     index: 338
   }, {
-    tuopan: null,
+    liaoxiang: null,
     boxArr: [],
     position: [13.5302858, 0.825012267, -2.11484385],
     index: 376
   }, {
-    tuopan: null,
+    liaoxiang: null,
     boxArr: [],
     position: [15.2603331, 0.825012267, -2.11484385],
     index: 430
   }, {
-    tuopan: null,
+    liaoxiang: null,
     boxArr: [],
     position: [17.0665665, 0.825012267, -2.11484385],
     index: 486
   }, {
-    tuopan: null,
+    liaoxiang: null,
     boxArr: [],
     position: [18.7966137, 0.825012267, -2.11484385],
     index: 542
   }, {
-    tuopan: null,
+    liaoxiang: null,
     boxArr: [],
     position: [20.2598171, 0.825012267, -2.11484385],
     index: 587
   }, {
-    tuopan: null,
+    liaoxiang: null,
     boxArr: [],
     position: [21.98986, 0.825012267, -2.11484385],
     index: 642
   }, {
-    tuopan: null,
+    liaoxiang: null,
     boxArr: [],
     position: [23.4733028, 0.825012267, -2.11484385],
     index: 689
   }, {
-    tuopan: null,
+    liaoxiang: null,
     boxArr: [],
     position: [25.2033443, 0.825012267, -2.11484385],
     index: 743
   }, {
-    tuopan: null,
+    liaoxiang: null,
     boxArr: [],
     position: [27.4407387, 0.825012267, -2.11484385],
     index: 814
   }, {
-    tuopan: null,
+    liaoxiang: null,
     boxArr: [],
     position: [29.1707821, 0.825012267, -2.11484385],
     index: 868
   }, {
-    tuopan: null,
+    liaoxiang: null,
     boxArr: [],
     position: [30.6276722, 0.825012267, -2.11484385],
     index: 913
   }, {
-    tuopan: null,
+    liaoxiang: null,
     boxArr: [],
     position: [32.35771, 0.825012267, -2.11484385],
     index: 969
@@ -568,6 +608,7 @@ const lineObjects = {},
   clock = new Bol3D.Clock(true),
   renderT = 1 / 20
 
+
 export const STATE = {
   initialState,
   PUBLIC_PATH,
@@ -583,7 +624,7 @@ export const STATE = {
   danBoxArr,
   duoBoxArr,
   loopBoxArr,
-  ckBoxArr,
+  danCkBoxArr,
   scan,
   sceneModel,
   danPack,
@@ -595,6 +636,7 @@ export const STATE = {
   loopRoadway,
   fjjArr,
   jxsbObject,
+  lianjie,
   clock,
   renderT,
   times
