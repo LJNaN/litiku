@@ -310,27 +310,30 @@ function getData () {
   let wsMessage = null
 
   // ====================线上真实的=====================
-  const ws = new WebSocket(
-    `ws://127.0.0.1:8001/`
-    // `ws://192.168.8.170:5443/null`
-  )
-  ws.onmessage = function (e) {
-    wsMessage = JSON.parse(e.data)
-    driver(wsMessage)
-  }
+  // const ws = new WebSocket(
+  //   `ws://127.0.0.1:8001/`
+  //   // `ws://192.168.8.170:5443/null`
+  // )
+  // ws.onmessage = function (e) {
+  //   wsMessage = JSON.parse(e.data)
+  //   driver(wsMessage)
+  // }
   // ===================================================
 
 
   // ===================线下模拟的=======================
-  // let i = 0
-  // setInterval(() => {
-  //   driver(mockData[i])
-  //   i++
-  // }, 1000)
+  let i = 0
+  setInterval(() => {
+    driver(mockData[i])
+    i++
+  }, 1000)
 
   // ===================================================
 
   function driver (wsMessage) {
+    console.log(wsMessage)
+
+
 
     // 有些没名字
     if (wsMessage.EquName) {
@@ -868,9 +871,21 @@ function duoCkBoxMove () {
       } else if (userData.index == STATE.lineObjects[userData.lineName].length - 10) {
         userData.lineName = ''
         const dir = (userData.baffle + 1) % 2
-        const animation = STATE.jxsbObject['jxsb' + Math.ceil((userData.baffle + 1) / 2)].model.userData[dir ? 'Animation1' : 'Animation']
+        const jxsbMesh = STATE.jxsbObject['jxsb' + Math.ceil((userData.baffle + 1) / 2)].model
+        const targetName = dir ? 'huo001' : 'huo'
+        jxsbMesh.children.forEach(e => {
+          if (e.name === targetName) {
+            e.visible = true
+          }
+        })
+        const animation = jxsbMesh.userData[dir ? 'Animation1' : 'Animation']
 
         const finished = () => {
+          jxsbMesh.children.forEach(e => {
+            if (e.name === targetName) {
+              e.visible = false
+            }
+          })
           animation._mixer.removeEventListener('finished', finished)
           userData.lineName = machine.lineName
         }
@@ -971,9 +986,10 @@ function lxBoxMove (liaoxiangOpt) {
   const liaoxiang = STATE.loopRoadway[baffle - 1].liaoxiang
   liaoxiang.userData.dest = dest
   liaoxiang.userData.baffle = baffle
-  liaoxiang.userData.type = baffle < 2 ? 'ipad' : 'phone'
+  liaoxiang.userData.type = baffle < 3 ? 'ipad' : 'phone'
   if (liaoxiang.userData.type === 'phone') {
-    const shouji = liaoxiang.children[0].children.find(e => e.name === 'shouji001')
+
+    const shouji = liaoxiang.children.find(e => e.name === 'shouji001')
     if (shouji) {
       const clone1 = shouji.clone()
       const clone2 = shouji.clone()
@@ -1037,8 +1053,6 @@ function loopBoxMove () {
           userData.boxArr = []
           STATE.loopBoxArr.splice(i, 1)
           i--
-
-
           liaoxiang.rotation.x = 0
           liaoxiang.rotation.y = 0
           new Bol3D.TWEEN.Tween(liaoxiang.position).to({
@@ -1046,8 +1060,7 @@ function loopBoxMove () {
             y: baffle.position[1],
             z: baffle.position[2],
           }, 800).start().onComplete(() => {
-            liaoxiang.children[0].children = userData.children
-
+            liaoxiang.children = userData.children
           })
         }
       } else if (userData.baffle >= 10 && userData.index == 674) {
@@ -1083,30 +1096,32 @@ function loopBoxMove () {
       }
     } else if (userData.lineName == 'D4') {
       userData.pack = [3123, 3125, 3127, 3129, 3131, 3133, 3135, 3137].findIndex(e => e == userData.dest)
-      if (userData.index == STATE.duoPack[userData.pack].index) {
+      if (userData.index == STATE.duoPack[userData.pack]?.index) {
         userData.lineName = 'D3'
         if (userData.type === 'phone') {
-          const initMeshNameArr = ['pmtuopan_(1)', 'shouji001', 'shouji002', 'shouji003', 'shouji004', 'shouji005']
+          const initMeshNameArr = ['pmtuopan001', 'shouji001', 'shouji002', 'shouji003', 'shouji004', 'shouji005']
           const initMeshArr = []
           let liaoxiangMesh = null
-          STATE.loopBoxArr[i].children[0].children.forEach(e => {
+          STATE.loopBoxArr[i].children.forEach(e => {
             if (initMeshNameArr.includes(e.name)) {
               initMeshArr.push(e)
-              if (e.name === 'pmtuopan_(1)') {
+              if (e.name === 'pmtuopan001') {
                 liaoxiangMesh = e
               }
             }
           })
+
+
           userData.children = initMeshArr // 保存初始状态
-          STATE.loopBoxArr[i].children[0].children = [liaoxiangMesh] // 清除平板
+          STATE.loopBoxArr[i].children = [liaoxiangMesh] // 清除平板
         } else {
-          const initMeshNameArr = ['dapmtuopan_(1)', 'ipad']
+          const initMeshNameArr = ['dapmtuopan001_(1)', 'ipad']
           const initMeshArr = []
           let liaoxiangMesh = null
           STATE.loopBoxArr[i].children[0].children.forEach(e => {
             if (initMeshNameArr.includes(e.name)) {
               initMeshArr.push(e)
-              if (e.name === 'dapmtuopan_(1)') {
+              if (e.name === 'dapmtuopan001_(1)') {
                 liaoxiangMesh = e
               }
             }
@@ -1118,7 +1133,27 @@ function loopBoxMove () {
         userData.pack = null
         userData.boxArr = null
         userData.back = true
+      } else if (userData.index >= 1040) {
+        const liaoxiang = STATE.loopBoxArr[i]
+        const baffle = STATE.loopRoadway[userData.baffle - 1]
+        if (userData.baffle > 2) {
+          const clone1 = liaoxiang.children.find(e => e.name === 'clone1')
+          const clone2 = liaoxiang.children.find(e => e.name === 'clone2')
+          const clone3 = liaoxiang.children.find(e => e.name === 'clone3')
+          liaoxiang.remove(clone1)
+          liaoxiang.remove(clone2)
+          liaoxiang.remove(clone3)
+        }
+
+        userData.lineName = ''
+        userData.boxArr = []
+        STATE.loopBoxArr.splice(i, 1)
+        i--
+        liaoxiang.rotation.x = 0
+        liaoxiang.rotation.y = 0
+        liaoxiang.position.set(baffle.position[0], baffle.position[1], baffle.position[2])
       }
+
     } else if (userData.lineName == 'D3' && userData.index == 0) {
       userData.lineName = 'E1'
       userData.index = STATE.lineObjects['E1'].length - 2
@@ -1241,15 +1276,15 @@ export function showModel (index) {
     switch (true) {
       case index == 0 && key == 'rukuxian':
       case index == 1 && key == "jshepda":
-      case index == 2 && (key == "huanxian" || key == 'rukuxian'):
+      case index == 2 && (key == "huanxian" || key == 'rukuxian' || key.includes('huanxian_')):
       case index == 3 && key.includes('jxsb'):
-      case index == 4 && key == "huanxian":
+      case index == 4 && (key == "huanxian" || key.includes('huanxian_')):
       case index == -1:
         STATE.sceneModel[key].traverse(child => {
           switch (true) {
             case index == 0 && (child.name.includes('yidongshangxiaban') || child.name.includes('shijuesaomaoji') || child.name.includes('cesaoji_')):
-            case index == 4 && child.parent.name !== "xuyingchang" && child.name !== "对象158" && child.name !== "tishengji":
             case index == 2 && key === 'rukuxian' && !child.name.includes('yidongshangxiaban'):
+            case index == 4 && child.parent.name !== "xuyingchang" && child.name !== "对象158" && child.name !== "tishengji" && child.name !== 'huanxian_LongCylinder1':
               if (child.isMesh) {
                 child.material.transparent = true
                 child.material.opacity = 0.1
@@ -1334,39 +1369,10 @@ function render () {
       STATE.rkPasue = status
     } else {
       rkBoxMove()
-      rkBoxMove()
-      rkBoxMove()
-      rkBoxMove()
-      rkBoxMove()
-      rkBoxMove()
-      rkBoxMove()
-      rkBoxMove()
-      rkBoxMove()
-      rkBoxMove()
     }
 
     danCkBoxMove()
-    danCkBoxMove()
-    danCkBoxMove()
-    danCkBoxMove()
-    danCkBoxMove()
-    danCkBoxMove()
     duoCkBoxMove()
-    duoCkBoxMove()
-    duoCkBoxMove()
-    duoCkBoxMove()
-    duoCkBoxMove()
-    loopBoxMove()
-    loopBoxMove()
-    loopBoxMove()
-    loopBoxMove()
-    loopBoxMove()
-    loopBoxMove()
-    loopBoxMove()
-    loopBoxMove()
-    loopBoxMove()
-    loopBoxMove()
-    loopBoxMove()
     loopBoxMove()
     STATE.times = 0
   }

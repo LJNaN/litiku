@@ -395,10 +395,21 @@ export const sceneOnLoad = ({ domElement, callback }) => {
         // })
       } else if (model.name == 'jszhuaqu') {
         // mesh instance
+        const removeList1 = ['Line4158', 'Line4150', 'Line4142', 'Line4134', 'Line4126', 'Line4118', 'Line4110', 'Line4102', 'Line4094', 'Line4086', 'Line4078', 'Line4070', 'Line4062', 'Line4054', 'Line4046_(1)', 'Line2073', 'Box1248', 'Box1254', 'Box1236', 'Box1242', 'Box1224', 'Box1230', 'Box1212', 'Box1218', 'Box1200', 'Box1206', 'Box1188', 'Box1194', 'Box1176', 'Box1182', 'Box1170', 'Box474']
+        const removeList2 = ['Box1243', 'Box1249', 'Box1231', 'Box1237', 'Box1219', 'Box1225', 'Box1207', 'Box1213', 'Box1195', 'Box1201', 'Box1183', 'Box1189', 'Box1171', 'Box1177', 'Box1165', 'Box462']
         model.traverse((child) => {
           if (child.isMesh) {
-            const removeList = ['Line4158', 'Line4150', 'Line4142', 'Line4134', 'Line4126', 'Line4118', 'Line4110', 'Line4102', 'Line4094', 'Line4086', 'Line4078', 'Line4070', 'Line4062', 'Line4054', 'Line4046_(1)', 'Line2073', 'Box1248', 'Box1254', 'Box1236', 'Box1242', 'Box1224', 'Box1230', 'Box1212', 'Box1218', 'Box1200', 'Box1206', 'Box1188', 'Box1194', 'Box1176', 'Box1182', 'Box1170', 'Box474']
-            if (removeList.includes(child.name)) {
+            if (child && removeList1.includes(child.name)) {
+              if (!CACHE.removed[child.name]) CACHE.removed[child.name] = child
+              child.geometry.dispose()
+              if (child.material.map) {
+                child.material.map.dispose()
+                child.material.map = null
+              }
+              child.material.dispose()
+              child = null
+
+            } else if (child && removeList2.includes(child.name)) {
               if (!CACHE.removed[child.name]) CACHE.removed[child.name] = child
               child.geometry.dispose()
               if (child.material.map) {
@@ -467,7 +478,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
             //       // child.material.dispose()
             //       // child = null
             //     } else
-            else if (child.name.includes('Cylinder')) {
+            else if (child && child.name.includes('Cylinder')) {
               // mesh
               if (!CACHE.instanceTransformInfo['jszhuaqu_Cylinder']) CACHE.instanceTransformInfo['jszhuaqu_Cylinder'] = []
               CACHE.instanceTransformInfo['jszhuaqu_Cylinder'].push({
@@ -770,6 +781,11 @@ export const sceneOnLoad = ({ domElement, callback }) => {
       } else if (model.name == 'jxsb') {
         for (const key in STATE.jxsbObject) {
           const modelClone = Bol3D.SkeletonUtils.clone(model)
+          modelClone.traverse(child => {
+            if (child.isMesh && (child.name === 'huo' || child.name === 'huo001')) {
+              child.visible = false
+            }
+          })
           modelClone.name = key
           modelClone.position.set(...STATE.jxsbObject[key].position)
           const mixer1 = new Bol3D.AnimationMixer(modelClone)
@@ -804,13 +820,16 @@ export const sceneOnLoad = ({ domElement, callback }) => {
         container.remove(model)
       } else if (model.name === 'tuopan') {
         model.parent.remove(model)
-      } else if (model.name.includes('tuopan')) {
+      } else if (model.name === 'pmtuopan') {
+        const shouji = model.children.find(e => e.name === 'shouji')
+        shouji.parent.remove(shouji)
+      }
+      if (model.name.includes('tuopan')) {
         container.remove(model)
       }
 
     },
     onLoad: (evt) => {
-
       window.container = evt
       // API.addReflector()
 
@@ -845,6 +864,8 @@ export const sceneOnLoad = ({ domElement, callback }) => {
         }
         instanceMesh.name = key
         evt.scene.add(instanceMesh)
+
+        STATE.sceneModel[key] = instanceMesh
         // CACHE.outsideScene.push(instanceMesh);
       }
 
@@ -859,6 +880,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
           merged.material.color = new Bol3D.Color(0.4, 0.4, 0.4)
         }
         container.attach(merged)
+        STATE.sceneModel[key] = merged
       }
 
 
