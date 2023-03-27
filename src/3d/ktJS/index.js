@@ -221,7 +221,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
       supersampling: false
     },
     gammaEnabled: true,
-    stats: true,
+    stats: false,
     // loadingBar: {
     //   show: true,
     //   type: 10
@@ -884,8 +884,10 @@ export const sceneOnLoad = ({ domElement, callback }) => {
       }
 
 
-      API.loadGUI()
-      API.getData()
+      // API.loadGUI()
+      setTimeout(() => {
+        API.getData()
+      }, 2000)
       API.initEvent()
       container.clickObjects = STATE.tempClickObjects
 

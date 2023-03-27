@@ -8,7 +8,7 @@
       </p>
     </div>
     <div class="app-header-center">
-      <p>合益智能</p>
+      <p>爱回收立体库监控系统</p>
       <Navbar></Navbar>
     </div>
     <div class="app-header-right">

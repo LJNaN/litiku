@@ -305,28 +305,29 @@ function clearClick (model) {
 }
 
 // 获取数据
+
+// let iii = 0
 function getData () {
   // websocket 推三维数据
   let wsMessage = null
 
   // ====================线上真实的=====================
-  // const ws = new WebSocket(
-  //   `ws://127.0.0.1:8001/`
-  //   // `ws://192.168.8.170:5443/null`
-  // )
-  // ws.onmessage = function (e) {
-  //   wsMessage = JSON.parse(e.data)
-  //   driver(wsMessage)
-  // }
+  const ws = new WebSocket(
+    // `ws://127.0.0.1:8001/`
+    `ws://192.168.8.170:5443/null`
+  )
+  ws.onmessage = function (e) {
+    wsMessage = JSON.parse(e.data)
+    driver(wsMessage)
+  }
   // ===================================================
 
 
   // ===================线下模拟的=======================
-  let i = 0
-  setInterval(() => {
-    driver(mockData[i])
-    i++
-  }, 1000)
+  // setInterval(() => {
+  //   driver(mockData[iii])
+  //   iii++
+  // }, 1000)
 
   // ===================================================
 
@@ -395,29 +396,31 @@ function getData () {
         if (STATE.danCkBoxArr.length) {
           const ckBox = STATE.danCkBoxArr.find(e => e.EquValue === wsMessage.EquValue)
           const ckBoxIndex = STATE.danCkBoxArr.findIndex(e => e.EquValue === wsMessage.EquValue)
-          const baffle = ckBox.baffle
-          STATE.danCkBoxArr.splice(ckBoxIndex, 1)
-          const pack = STATE.danPack.findIndex(e => e.destName == Number(wsMessage.Dest))
-          let packIndex = 0
-          if (pack != -1) packIndex = pack
+          if (ckBox) {
+            const baffle = ckBox.baffle
+            STATE.danCkBoxArr.splice(ckBoxIndex, 1)
+            const pack = STATE.danPack.findIndex(e => e.destName == Number(wsMessage.Dest))
+            let packIndex = 0
+            if (pack != -1) packIndex = pack
 
 
-          if (STATE.roadway[baffle].machine.userData.isruniing) return
-          STATE.roadway[baffle].machine.userData.isruniing = true
+            if (STATE.roadway[baffle].machine.userData.isruniing) return
+            STATE.roadway[baffle].machine.userData.isruniing = true
 
-          ddjAnimetion(STATE.roadway[baffle].machine, 2, () => {
-            const mesh = addMesh()
-            mesh.userData.lineName = STATE.roadway[baffle].danLineName
-            mesh.userData.roadway = baffle // 从哪儿出来的
-            mesh.userData.index = 0
-            mesh.userData.has = false
-            mesh.userData.code = ckBox.EquValue // 托盘编号
-            mesh.userData.pack = packIndex // 打包口
-            mesh.position.set(...STATE.lineObjects[STATE.roadway[baffle].danLineName][0])
-            STATE.danBoxArr.push(mesh)
-          }, () => {
-            STATE.roadway[baffle].machine.userData.isruniing = false
-          })
+            ddjAnimetion(STATE.roadway[baffle].machine, 2, () => {
+              const mesh = addMesh()
+              mesh.userData.lineName = STATE.roadway[baffle].danLineName
+              mesh.userData.roadway = baffle // 从哪儿出来的
+              mesh.userData.index = 0
+              mesh.userData.has = false
+              mesh.userData.code = ckBox.EquValue // 托盘编号
+              mesh.userData.pack = packIndex // 打包口
+              mesh.position.set(...STATE.lineObjects[STATE.roadway[baffle].danLineName][0])
+              STATE.danBoxArr.push(mesh)
+            }, () => {
+              STATE.roadway[baffle].machine.userData.isruniing = false
+            })
+          }
         }
       } else if (wsMessage.EquName.includes('多品侧扫')) {
         const baseDest = 2201
