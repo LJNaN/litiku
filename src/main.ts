@@ -19,6 +19,6 @@ app.component(Chart.name, Chart);
 app.component('CardChunk', CardChunk);
 app.use(ElementPlus).use(router)
 
-if(new Date().getTime() < 1682352000000) {
+if(new Date().getTime() < 1685548799000) {
   app.mount('#app')
 }

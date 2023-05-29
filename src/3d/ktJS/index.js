@@ -883,6 +883,8 @@ export const sceneOnLoad = ({ domElement, callback }) => {
         STATE.sceneModel[key] = merged
       }
 
+      window.STATE = STATE
+
 
       // API.loadGUI()
       setTimeout(() => {

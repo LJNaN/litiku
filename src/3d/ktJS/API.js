@@ -304,6 +304,9 @@ function clearClick (model) {
   model = null
 }
 
+
+let chuku = 0
+let zhuaqu = 0
 // 获取数据
 
 // let iii = 0
@@ -332,12 +335,11 @@ function getData () {
   // ===================================================
 
   function driver (wsMessage) {
-    console.log(wsMessage)
-
 
 
     // 有些没名字
     if (wsMessage.EquName) {
+
       if (wsMessage.EquName === '入库扫描') {
         const box = addMesh(wsMessage.EquValue2, wsMessage.EquValue)
         const baffle = wsMessage.Dest
@@ -374,6 +376,7 @@ function getData () {
               EquValue: wsMessage.EquValue // 托盘编号
             })
           } else { // 多品出库
+            chuku++
             ddjAnimetion(STATE.roadway[baffle].machine, 3, () => {
               const mesh = addMesh()
               mesh.userData.lineName = STATE.roadway[baffle].duoLineName
@@ -423,16 +426,24 @@ function getData () {
           }
         }
       } else if (wsMessage.EquName.includes('多品侧扫')) {
-        const baseDest = 2201
-        const wsDest = Number(wsMessage.Dest)
-        const baffle = wsDest - baseDest // 本地的进入机器人抓取的巷道
-        const duoBox = STATE.duoBoxArr.find(e => e.userData.code == wsMessage.EquValue)
-        if (duoBox) duoBox.userData.baffle = baffle
+        // 甲方那边的数据不完整，这里不需要了，直接读取机器人的数据
+        // const baseDest = 2201
+        // const wsDest = Number(wsMessage.Dest)
+        // const baffle = wsDest - baseDest // 本地的进入机器人抓取的巷道
+        // const duoBox = STATE.duoBoxArr.find(e => e.userData.code == wsMessage.EquValue)
+        // if (duoBox) duoBox.userData.baffle = baffle
       } else if (wsMessage.EquName.includes('机器人')) {
         if (wsMessage.EquValue.includes('抓取物品')) {
-          const code = wsMessage.EquValue.replace('抓取物品', '')
+          const code = wsMessage.EquValue.replace('抓取物品', '') // 托盘编码
+          const machineCode = Number(wsMessage.EquName.match(/(?<=R).*(?=机器人)/)[0]) // 机器人编号
+          const direction = Number(wsMessage.EquValue2)
+          const baffle = [8, 7, 6, 5, 4, 3, 2, 1].findIndex(e => e === machineCode) * 2 + direction - 1
           const mesh = STATE.duoBoxArr.find(e => e.userData.code == code)
-          if (mesh) mesh.userData.catch = true
+          if (mesh) {
+            zhuaqu++
+            mesh.userData.catch = true
+            mesh.userData.baffle = baffle
+          }
         } else if (wsMessage.EquValue === '抓取料箱') { // 还没做
           STATE.thisBoxWSMessage = wsMessage
           STATE.thisBoxWSMessage.random = Math.random()
@@ -441,6 +452,8 @@ function getData () {
         const dest = wsMessage.EquValue2 // 目标打包台
         const baffle = wsMessage.EquName.replace('空箱线最终站台', '').replace('料箱送走', '') // 从哪个机器人巷道出来
         lxBoxMove({ dest: Number(dest), baffle: Number(baffle) })
+      } else if (wsMessage.EquName === '空箱线手机检测有无') {
+
       }
     }
   }
@@ -736,7 +749,7 @@ function tpRecycle (userData, arr, i) {
       // }, 2000).start().onComplete(() => {
       //     container.remove(arr[i])
       //     arr.splice(i, 1);
-      //     i--
+      //     // i--
       // })
     } else if (userData.index <= 0) {
       container.remove(arr[i])
@@ -792,14 +805,15 @@ function duoCkBoxMove () {
     // 出库
     if (userData.lineName.includes('F') && userData.index >= STATE.lineObjects[userData.lineName].length - 2) {
       userData.lineName = 'C3'
+      userData.isFirstLoop = true
       userData.index = STATE.roadway[userData.roadway].duoIndex
     } else if (userData.lineName == 'C3') {// 经过扫码器并移动到C2线
       let duoScan
       let index2
-      if (userData.roadway <= 7) {
+      if (userData.isFirstLoop && userData.roadway <= 7) {
         duoScan = STATE.scan['cesaoji002']
         index2 = 596
-      } else if (userData.roadway <= 12) {
+      } else if (userData.isFirstLoop && userData.roadway <= 12) {
         duoScan = STATE.scan['cesaoji003']
         index2 = 927
       } else {
@@ -828,6 +842,7 @@ function duoCkBoxMove () {
         if (userData.index < 6) {
           // 循环回去，移动到c3
           userData.lineName = ''
+          userData.isFirstLoop = false
 
           // 动画嵌套
           new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
@@ -836,31 +851,36 @@ function duoCkBoxMove () {
             }, 500).start()
 
 
-          new Bol3D.TWEEN.Tween(STATE.lianjie.position)
-            .to({
-              y: 0.02
-            }, 500).start().onComplete(() => {
+          try {
+            new Bol3D.TWEEN.Tween(STATE.lianjie.position)
+              .to({
+                y: 0.02
+              }, 500).start().onComplete(() => {
 
-              new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
-                .to({
-                  x: -1.25,
-                  z: STATE.lineObjects['C3'][0][2]
-                }, 500).start().onComplete(() => {
+                new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
+                  .to({
+                    x: -1.25,
+                    z: STATE.lineObjects['C3'][0][2]
+                  }, 500).start().onComplete(() => {
 
-                  new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
-                    .to({
-                      y: STATE.duoBoxArr[i].position.y - 0.02
-                    }, 500).start()
+                    new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
+                      .to({
+                        y: STATE.duoBoxArr[i].position.y - 0.02
+                      }, 500).start()
 
-                  new Bol3D.TWEEN.Tween(STATE.lianjie.position)
-                    .to({
-                      y: 0
-                    }, 500).start().onComplete(() => {
-                      userData.index = 0
-                      userData.lineName = 'C3'
-                    })
-                })
-            })
+                    new Bol3D.TWEEN.Tween(STATE.lianjie.position)
+                      .to({
+                        y: 0
+                      }, 500).start().onComplete(() => {
+                        userData.index = 0
+                        userData.lineName = 'C3'
+                      })
+                  })
+              })
+          } catch (e) {
+            console.log(STATE.duoBoxArr[i])
+            console.log(e)
+          }
         }
       } else if (userData.index == machine.index + 20) {
         if (machine.baffle?.userData.status) dbAnimetion2(machine.baffle, false)
@@ -882,6 +902,7 @@ function duoCkBoxMove () {
           }
         })
         const animation = jxsbMesh.userData[dir ? 'Animation1' : 'Animation']
+        console.log('animation: ', animation)
 
         const finished = () => {
           jxsbMesh.children.forEach(e => {
@@ -893,6 +914,7 @@ function duoCkBoxMove () {
           userData.lineName = machine.lineName
         }
         animation._mixer.addEventListener('finished', finished)
+        animation.reset()
         animation.play()
       } else if (userData.index == STATE.lineObjects[userData.lineName].length - 2) {
         userData.lineName = 'A1'
@@ -1169,10 +1191,14 @@ function loopBoxMove () {
         new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
           x: 6.55921422283932
         }, 3000).start().onComplete(() => {
-          STATE.loopBoxArr[i].position.set(...STATE.loopRoadway[userData.baffle - 1].position)
-          STATE.loopBoxArr[i].children[0].children = userData.children
-          STATE.loopBoxArr.splice(i, 1)
-          i--
+          try {
+            STATE.loopBoxArr[i].position.set(...STATE.loopRoadway[userData.baffle - 1].position)
+            STATE.loopBoxArr[i].children[0].children = userData.children
+            STATE.loopBoxArr.splice(i, 1)
+            i--
+          } catch (e) {
+            console.log(e)
+          }
         })
       }
     } else if (userData.lineName == 'D2' && userData.index == STATE.lineObjects['D2'].length - 3) {
@@ -1354,9 +1380,16 @@ function addReflector () {
   mirro.position.set(13.5, 0, -3.7)
 
   container.attach(mirro)
-
 }
 
+(() => {
+  setTimeout(() => {
+    setInterval(() => {
+      console.log('出库', chuku)
+      console.log('抓取', zhuaqu)
+    }, 3000)
+  }, 5000)
+})()
 
 function render () {
   requestAnimationFrame(render)
@@ -1376,6 +1409,12 @@ function render () {
 
     danCkBoxMove()
     duoCkBoxMove()
+    duoCkBoxMove()
+    duoCkBoxMove()
+    duoCkBoxMove()
+    loopBoxMove()
+    loopBoxMove()
+    loopBoxMove()
     loopBoxMove()
     STATE.times = 0
   }
