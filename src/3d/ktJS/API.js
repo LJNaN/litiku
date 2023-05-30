@@ -878,8 +878,8 @@ function duoCkBoxMove () {
                   })
               })
           } catch (e) {
-            console.log(STATE.duoBoxArr[i])
-            console.log(e)
+
+
           }
         }
       } else if (userData.index == machine.index + 20) {
@@ -902,7 +902,7 @@ function duoCkBoxMove () {
           }
         })
         const animation = jxsbMesh.userData[dir ? 'Animation1' : 'Animation']
-        console.log('animation: ', animation)
+
 
         const finished = () => {
           jxsbMesh.children.forEach(e => {
@@ -1197,7 +1197,7 @@ function loopBoxMove () {
             STATE.loopBoxArr.splice(i, 1)
             i--
           } catch (e) {
-            console.log(e)
+
           }
         })
       }
@@ -1385,8 +1385,8 @@ function addReflector () {
 (() => {
   setTimeout(() => {
     setInterval(() => {
-      console.log('出库', chuku)
-      console.log('抓取', zhuaqu)
+
+
     }, 3000)
   }, 5000)
 })()
@@ -1409,12 +1409,6 @@ function render () {
 
     danCkBoxMove()
     duoCkBoxMove()
-    duoCkBoxMove()
-    duoCkBoxMove()
-    duoCkBoxMove()
-    loopBoxMove()
-    loopBoxMove()
-    loopBoxMove()
     loopBoxMove()
     STATE.times = 0
   }
