@@ -8,6 +8,11 @@ import '../asset/main.less'
 
 
 let container
+const cookiePosition = document.cookie.replace(/(?:(?:^|.*;\s*)position\s*\=\s*([^;]*).*$)|^.*$/, "$1")
+const cookieTarget = document.cookie.replace(/(?:(?:^|.*;\s*)target\s*\=\s*([^;]*).*$)|^.*$/, "$1")
+let cookiePositionJson, cookieTargetJson
+if (cookiePosition) cookiePositionJson = JSON.parse(cookiePosition)
+if (cookieTarget) cookieTargetJson = JSON.parse(cookieTarget)
 
 export const sceneOnLoad = ({ domElement, callback }) => {
   container = new Bol3D.Container({
@@ -17,7 +22,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
     bloomEnabled: false,
     cameras: {
       orbitCamera: {
-        position: [STATE.initialState.position.x, STATE.initialState.position.y, STATE.initialState.position.z],
+        position: cookiePositionJson ? [cookiePositionJson.x, cookiePositionJson.y, cookiePositionJson.z] : [STATE.initialState.position.x, STATE.initialState.position.y, STATE.initialState.position.z],
         near: 1,
         far: 1000,
         fov: 45
@@ -27,7 +32,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
       orbitControls: {
         autoRotate: false,
         autoRotateSpeed: 1,
-        target: [STATE.initialState.target.x, STATE.initialState.target.y, STATE.initialState.target.z],
+        target: cookieTargetJson ? [cookieTargetJson.x, cookieTargetJson.y, cookieTargetJson.z] : [STATE.initialState.target.x, STATE.initialState.target.y, STATE.initialState.target.z],
         // minDistance: 0,
         // maxDistance: 2500,
         maxPolarAngle: Math.PI * 0.44,
@@ -892,6 +897,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
       }, 2000)
       API.initEvent()
       container.clickObjects = STATE.tempClickObjects
+      API.reload()
 
       API.render()
 

@@ -1382,14 +1382,14 @@ function addReflector () {
   container.attach(mirro)
 }
 
-(() => {
+// 12小时刷新一次
+function reload () {
   setTimeout(() => {
-    setInterval(() => {
-
-
-    }, 3000)
-  }, 5000)
-})()
+    document.cookie = `position=${JSON.stringify(container.orbitCamera.position)}`
+    document.cookie = `target=${JSON.stringify(container.orbitControls.target)}`
+    location.reload()
+  }, 1000 * 60 * 60 * 12)
+}
 
 function render () {
   requestAnimationFrame(render)
@@ -1434,5 +1434,6 @@ export const API = {
   ddjChengZhua,
   initEvent,
   addReflector,
-  render
+  render,
+  reload
 }
