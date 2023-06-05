@@ -9,3 +9,44 @@
 .dg.ac {
   z-index: 1 !important;
 }
+
+
+@keyframes left-in {
+  0% {
+    transform: translateX(-110%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes right-in {
+  0% {
+    transform: translateX(110%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes bottom-in {
+  0% {
+    transform: translateY(110%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes icon-in {
+  0% {
+    transform: translateX(18vw);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}

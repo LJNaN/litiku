@@ -1,5 +1,5 @@
 <template>
-  <div class="bottom">
+  <div class="bottom" id="bottomBar" style="animation: bottom-in 0.5s ease;">
     <slot></slot>
   </div>
 </template>
@@ -8,18 +8,7 @@
 </script>
 
 <style lang="less" scoped>
-@keyframes bottom-in {
-  0% {
-    transform: translateY(100%);
-  }
-
-  100% {
-    transform: translateX(0);
-  }
-}
-
 .bottom {
-  animation: bottom-in 0.5s ease;
   position: absolute;
   display: flex;
   justify-content: space-evenly;

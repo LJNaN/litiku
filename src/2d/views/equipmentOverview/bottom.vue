@@ -1,5 +1,5 @@
 <template>
-  <Bottom>
+  <Bottom style="height: 20.7vh">
     <div class="main">
       <div v-for="(item, index) in navList" :key="index" class="item" :class="{ active: activeIndex === index }"
         @click="handleNav(index)">

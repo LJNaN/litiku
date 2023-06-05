@@ -3,6 +3,7 @@
   <div class="body-box">
     <Header></Header>
     <router-view></router-view>
+    <HiddenComponent></HiddenComponent>
   </div>
   <div style="width: 100vw;height: 100vh;">
     <canvas ref="sceneEl" class="sceneEl"></canvas>
@@ -14,32 +15,7 @@
 import Header from "@/2d/components/Header.vue"
 import { onMounted, ref } from 'vue'
 import { sceneOnLoad } from '@/3d/ktJS/index.js'
-
-/***
- *                    _ooOoo_
- *                   o8888888o
- *                   88" . "88
- *                   (| -_- |)
- *                    O\ = /O
- *                ____/`---'\____
- *              .   ' \\| |// `.
- *               / \\||| : |||// \
- *             / _||||| -:- |||||- \
- *               | | \\\ - /// | |
- *             | \_| ''\---/'' | |
- *              \ .-\__ `-` ___/-. /
- *           ___`. .' /--.--\ `. . __
- *        ."" '< `.___\_<|>_/___.' >'"".
- *       | | : `- \`.;`\ _ /`;.`/ - ` : | |
- *         \ \ `-. \_ __\ /__ _/ .-` / /
- * ======`-.____`-.___\_____/___.-`____.-'======
- *                    `=---='
- *
- * .............................................
- *          佛祖保佑             永无BUG
- */
-
-
+import HiddenComponent from '@/2d/components/HiddenComponent.vue'
 
 const sceneEl = ref(null)
 

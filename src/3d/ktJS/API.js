@@ -480,12 +480,14 @@ function dbAnimetion (model, status, callback) {
   } else {
     posY = -0.35
   }
-  model.userData.status = status
-  new Bol3D.TWEEN.Tween(model.position).to({
-    y: posY
-  }, 600).start().onComplete(() => {
-    if (callback) callback()
-  })
+  if (model) {
+    model.userData.status = status
+    new Bol3D.TWEEN.Tween(model.position).to({
+      y: posY
+    }, 600).start().onComplete(() => {
+      if (callback) callback()
+    })
+  }
 }
 
 // 挡板动画
@@ -498,13 +500,16 @@ function dbAnimetion2 (model, status, callback) {
   } else {
     posY = -0.35
   }
-  model.userData.status = status
 
-  new Bol3D.TWEEN.Tween(model.position).to({
-    y: posY
-  }, 600).start().onComplete(() => {
-    if (callback) callback()
-  })
+  if (model) {
+    model.userData.status = status
+
+    new Bol3D.TWEEN.Tween(model.position).to({
+      y: posY
+    }, 600).start().onComplete(() => {
+      if (callback) callback()
+    })
+  }
 }
 
 // 堆垛机动画 status 1 => 入库，2 => 单品出库， 3 => 多品出库
@@ -588,39 +593,45 @@ function ddjAnimetion (model, status, removeOrAdd, callback) {
 }
 
 function ddjDong (model, num) {
-  return new Promise((reslove, reject) => [
-    new Bol3D.TWEEN.Tween(model.position).to({
-      z: num
-    }, 800)
-      .start().onComplete(() => {
-        reslove(null)
-      })
-  ])
+  if (model) {
+    return new Promise((reslove, reject) => [
+      new Bol3D.TWEEN.Tween(model.position).to({
+        z: num
+      }, 800)
+        .start().onComplete(() => {
+          reslove(null)
+        })
+    ])
+  }
 }
 
 function ddjZhua (model, num) {
-  model.position.distanceToSquared(new Bol3D.Vector3(num, model.position.y, model.position.z)) * 500
-  return new Promise((reslove) => {
-    new Bol3D.TWEEN.Tween(model.position).to({
-      x: num
-    }, 800)
-      .start().onComplete(() => {
-        reslove(null)
-      })
-  })
-}
-
-function ddjChengZhua (model, num) {
-  return new Promise((reslove) => {
-    model.forEach(e => {
-      new Bol3D.TWEEN.Tween(e.position).to({
-        y: num
+  if (model) {
+    model.position.distanceToSquared(new Bol3D.Vector3(num, model.position.y, model.position.z)) * 500
+    return new Promise((reslove) => {
+      new Bol3D.TWEEN.Tween(model.position).to({
+        x: num
       }, 800)
         .start().onComplete(() => {
           reslove(null)
         })
     })
-  })
+  }
+}
+
+function ddjChengZhua (model, num) {
+  if (model) {
+    return new Promise((reslove) => {
+      model.forEach(e => {
+        new Bol3D.TWEEN.Tween(e.position).to({
+          y: num
+        }, 800)
+          .start().onComplete(() => {
+            reslove(null)
+          })
+      })
+    })
+  }
 }
 
 // 翻转板动画
@@ -726,14 +737,16 @@ function tpRecycle (userData, arr, i) {
     } else if (userData.index == 614 && !userData.has) {
       userData.lineName = ''
       userData.index = STATE.lineObjects.A2.length - 2
-      arr[i].lookAt(new Bol3D.Vector3(...STATE.lineObjects['A2'][userData.index]))
-      new Bol3D.TWEEN.Tween(arr[i].position).to({
-        x: STATE.lineObjects['A2'][userData.index][0],
-        y: STATE.lineObjects['A2'][userData.index][1],
-        z: STATE.lineObjects['A2'][userData.index][2],
-      }, 1000).start().onComplete(() => {
-        userData.lineName = 'A2'
-      })
+      if (arr[i]) {
+        arr[i].lookAt(new Bol3D.Vector3(...STATE.lineObjects['A2'][userData.index]))
+        new Bol3D.TWEEN.Tween(arr[i].position).to({
+          x: STATE.lineObjects['A2'][userData.index][0],
+          y: STATE.lineObjects['A2'][userData.index][1],
+          z: STATE.lineObjects['A2'][userData.index][2],
+        }, 1000).start().onComplete(() => {
+          userData.lineName = 'A2'
+        })
+      }
     } else if (userData.index == STATE.scan["shijuesaomaoji"].userData.index) {
       if (userData.barCode) STATE.scan["shijuesaomaoji"].userData.setScan(true)({
         '产品条码': userData.barCode
@@ -826,32 +839,35 @@ function duoCkBoxMove () {
       } else
         // 移动到C2线
         if (userData.index >= duoScan.userData.index + 30) {
-          userData.lineName = ''
-          new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
-            .to({
-              x: STATE.lineObjects['C2'][index2][0],
-              y: STATE.lineObjects['C2'][index2][1],
-              z: STATE.lineObjects['C2'][index2][2]
-            }, 500).start().onComplete(() => {
-              userData.index = index2
-              userData.lineName = 'C2'
-            })
+          if (STATE.duoBoxArr[i]) {
+            userData.lineName = ''
+            new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
+              .to({
+                x: STATE.lineObjects['C2'][index2][0],
+                y: STATE.lineObjects['C2'][index2][1],
+                z: STATE.lineObjects['C2'][index2][2]
+              }, 500).start().onComplete(() => {
+                userData.index = index2
+                userData.lineName = 'C2'
+              })
+          }
         }
     } else if (userData.lineName == 'C2') { // 移动到机器人站台，打开挡板
       if (!userData.catch || userData.index < machine?.index) {
         if (userData.index < 6) {
-          // 循环回去，移动到c3
-          userData.lineName = ''
-          userData.isFirstLoop = false
 
-          // 动画嵌套
-          new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
-            .to({
-              y: STATE.duoBoxArr[i].position.y + 0.02
-            }, 500).start()
+          if (STATE.duoBoxArr[i] && STATE.lianjie) {
 
+            // 循环回去，移动到c3
+            userData.lineName = ''
+            userData.isFirstLoop = false
 
-          try {
+            // 动画嵌套
+            new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
+              .to({
+                y: STATE.duoBoxArr[i].position.y + 0.02
+              }, 500).start()
+
             new Bol3D.TWEEN.Tween(STATE.lianjie.position)
               .to({
                 y: 0.02
@@ -877,9 +893,6 @@ function duoCkBoxMove () {
                       })
                   })
               })
-          } catch (e) {
-
-
           }
         }
       } else if (userData.index == machine.index + 20) {
@@ -993,12 +1006,14 @@ function rkBoxMove () {
         }
       }
     } else if (machine) {
-      machine.boxArr.push(STATE.rkBoxArr[i])
-      new Bol3D.TWEEN.Tween(STATE.rkBoxArr[i].position).to({
-        z: -14 + .2 * (machine.boxArr.length - 1)
-      }, 2000).start()
-      STATE.rkBoxArr.splice(i, 1)
-      i--
+      if (STATE.rkBoxArr[i]) {
+        machine.boxArr.push(STATE.rkBoxArr[i])
+        new Bol3D.TWEEN.Tween(STATE.rkBoxArr[i].position).to({
+          z: -14 + .2 * (machine.boxArr.length - 1)
+        }, 2000).start()
+        STATE.rkBoxArr.splice(i, 1)
+        i--
+      }
       if (machine.boxArr.length >= 10) STATE.rkPasue = false
     }
   }
@@ -1032,17 +1047,18 @@ function lxBoxMove (liaoxiangOpt) {
     }
   }
 
-
-  new Bol3D.TWEEN.Tween(liaoxiang.position).to({
-    x: STATE.lineObjects['D1'][index][0],
-    y: STATE.lineObjects['D1'][index][1],
-    z: STATE.lineObjects['D1'][index][2]
-  }, 800).start().onComplete(() => {
-    liaoxiang.userData.lineName = 'D1'
-    liaoxiang.userData.index = index
-    liaoxiang.userData.back = false
-    STATE.loopBoxArr.push(liaoxiang)
-  })
+  if (liaoxiang) {
+    new Bol3D.TWEEN.Tween(liaoxiang.position).to({
+      x: STATE.lineObjects['D1'][index][0],
+      y: STATE.lineObjects['D1'][index][1],
+      z: STATE.lineObjects['D1'][index][2]
+    }, 800).start().onComplete(() => {
+      liaoxiang.userData.lineName = 'D1'
+      liaoxiang.userData.index = index
+      liaoxiang.userData.back = false
+      STATE.loopBoxArr.push(liaoxiang)
+    })
+  }
 }
 
 // 环线
@@ -1074,50 +1090,58 @@ function loopBoxMove () {
         const baffle = STATE.loopRoadway[userData.baffle - 1]
         if (userData.index == baffle.index) {
           const liaoxiang = STATE.loopBoxArr[i]
-          userData.lineName = ''
-          userData.boxArr = []
-          STATE.loopBoxArr.splice(i, 1)
-          i--
-          liaoxiang.rotation.x = 0
-          liaoxiang.rotation.y = 0
-          new Bol3D.TWEEN.Tween(liaoxiang.position).to({
-            x: baffle.position[0],
-            y: baffle.position[1],
-            z: baffle.position[2],
-          }, 800).start().onComplete(() => {
-            liaoxiang.children = userData.children
-          })
+          if (liaoxiang) {
+            userData.lineName = ''
+            userData.boxArr = []
+            STATE.loopBoxArr.splice(i, 1)
+            i--
+            liaoxiang.rotation.x = 0
+            liaoxiang.rotation.y = 0
+            new Bol3D.TWEEN.Tween(liaoxiang.position).to({
+              x: baffle.position[0],
+              y: baffle.position[1],
+              z: baffle.position[2],
+            }, 800).start().onComplete(() => {
+              liaoxiang.children = userData.children
+            })
+          }
         }
       } else if (userData.baffle >= 10 && userData.index == 674) {
-        userData.lineName = ''
-        new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
-          x: STATE.lineObjects['D4'][678][0],
-          y: STATE.lineObjects['D4'][678][1],
-          z: STATE.lineObjects['D4'][678][2],
-        }, 2000).start().onComplete(() => {
-          userData.lineName = 'D4'
-          userData.index = 678
-        })
+        if (STATE.loopBoxArr[i]) {
+          userData.lineName = ''
+          new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
+            x: STATE.lineObjects['D4'][678][0],
+            y: STATE.lineObjects['D4'][678][1],
+            z: STATE.lineObjects['D4'][678][2],
+          }, 2000).start().onComplete(() => {
+            userData.lineName = 'D4'
+            userData.index = 678
+          })
+        }
       } else if (userData.baffle >= 5 && userData.index == 415) {
-        userData.lineName = ''
-        new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
-          x: STATE.lineObjects['D4'][406][0],
-          y: STATE.lineObjects['D4'][406][1],
-          z: STATE.lineObjects['D4'][406][2],
-        }, 2000).start().onComplete(() => {
-          userData.lineName = 'D4'
-          userData.index = 406
-        })
+        if (STATE.loopBoxArr[i]) {
+          userData.lineName = ''
+          new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
+            x: STATE.lineObjects['D4'][406][0],
+            y: STATE.lineObjects['D4'][406][1],
+            z: STATE.lineObjects['D4'][406][2],
+          }, 2000).start().onComplete(() => {
+            userData.lineName = 'D4'
+            userData.index = 406
+          })
+        }
       } else if (userData.index == 46) {
-        userData.lineName = ''
-        new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
-          x: STATE.lineObjects['D4'][21][0],
-          y: STATE.lineObjects['D4'][21][1],
-          z: STATE.lineObjects['D4'][21][2],
-        }, 2000).start().onComplete(() => {
-          userData.lineName = 'D4'
-          userData.index = 21
-        })
+        if (STATE.loopBoxArr[i]) {
+          userData.lineName = ''
+          new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
+            x: STATE.lineObjects['D4'][21][0],
+            y: STATE.lineObjects['D4'][21][1],
+            z: STATE.lineObjects['D4'][21][2],
+          }, 2000).start().onComplete(() => {
+            userData.lineName = 'D4'
+            userData.index = 21
+          })
+        }
       }
     } else if (userData.lineName == 'D4') {
       userData.pack = [3123, 3125, 3127, 3129, 3131, 3133, 3135, 3137].findIndex(e => e == userData.dest)
@@ -1187,19 +1211,21 @@ function loopBoxMove () {
         userData.lineName = 'D2'
         userData.index = 0
       } else if (userData.index == 15) {
-        userData.lineName = ''
-        new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
-          x: 6.55921422283932
-        }, 3000).start().onComplete(() => {
-          try {
-            STATE.loopBoxArr[i].position.set(...STATE.loopRoadway[userData.baffle - 1].position)
-            STATE.loopBoxArr[i].children[0].children = userData.children
-            STATE.loopBoxArr.splice(i, 1)
-            i--
-          } catch (e) {
+        if (STATE.loopBoxArr[i]) {
+          userData.lineName = ''
+          new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
+            x: 6.55921422283932
+          }, 3000).start().onComplete(() => {
+            try {
+              STATE.loopBoxArr[i].position.set(...STATE.loopRoadway[userData.baffle - 1].position)
+              STATE.loopBoxArr[i].children[0].children = userData.children
+              STATE.loopBoxArr.splice(i, 1)
+              i--
+            } catch (e) {
 
-          }
-        })
+            }
+          })
+        }
       }
     } else if (userData.lineName == 'D2' && userData.index == STATE.lineObjects['D2'].length - 3) {
       STATE.lineObjects['D2'].visible = false
