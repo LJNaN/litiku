@@ -9,7 +9,7 @@
 import router from "@/2d/router/index"
 import { ref, watch } from 'vue'
 let hidden = ref(false)
-console.log('router: ', router)
+
 
 watch(
   () => router.currentRoute.value.path,

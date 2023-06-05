@@ -316,12 +316,13 @@ function getData () {
 
   // ====================线上真实的=====================
   const ws = new WebSocket(
-    // `ws://127.0.0.1:8001/`
-    `ws://192.168.8.170:5443/null`
+    `ws://127.0.0.1:8001/`
+    // `ws://192.168.8.170:5443/null`
   )
   ws.onmessage = function (e) {
     wsMessage = JSON.parse(e.data)
     driver(wsMessage)
+
   }
   // ===================================================
 
@@ -454,6 +455,16 @@ function getData () {
         lxBoxMove({ dest: Number(dest), baffle: Number(baffle) })
       } else if (wsMessage.EquName === '空箱线手机检测有无') {
 
+      } else if (wsMessage.EquName === '料箱分类站台') {
+        if (STATE.D3RunArr.length) {
+          for (let i = 0; i < STATE.D3RunArr.length; i++) {
+            if (!STATE.D3RunArr[i].userData.type) {
+              if (wsMessage.Dest === '手机料箱') STATE.D3RunArr[i].userData.type = 'phone'
+              else STATE.D3RunArr[i].userData.type = 'ipad'
+              break
+            }
+          }
+        }
       }
     }
   }
@@ -1074,7 +1085,7 @@ function loopBoxMove () {
   for (let i = 0; i < STATE.loopBoxArr.length; i++) {
     let { userData } = STATE.loopBoxArr[i]
     if (!userData.lineName) continue
-    if (userData.lineName == 'D1' || userData.lineName == 'D3' || userData.lineName == 'E1') userData.index--
+    if (userData.lineName == 'D1' || userData.lineName == 'E1') userData.index--
     else userData.index++
     try {
       STATE.loopBoxArr[i].lookAt(new Bol3D.Vector3(...STATE.lineObjects[userData.lineName][userData.index]))
@@ -1147,6 +1158,7 @@ function loopBoxMove () {
       userData.pack = [3123, 3125, 3127, 3129, 3131, 3133, 3135, 3137].findIndex(e => e == userData.dest)
       if (userData.index == STATE.duoPack[userData.pack]?.index) {
         userData.lineName = 'D3'
+        STATE.D3RunArr.push(userData)
         if (userData.type === 'phone') {
           const initMeshNameArr = ['pmtuopan001', 'shouji001', 'shouji002', 'shouji003', 'shouji004', 'shouji005']
           const initMeshArr = []
@@ -1203,9 +1215,6 @@ function loopBoxMove () {
         liaoxiang.position.set(baffle.position[0], baffle.position[1], baffle.position[2])
       }
 
-    } else if (userData.lineName == 'D3' && userData.index == 0) {
-      userData.lineName = 'E1'
-      userData.index = STATE.lineObjects['E1'].length - 2
     } else if (userData.lineName == 'E1') {
       if (userData.index == 69 && userData.type == 'phone') {
         userData.lineName = 'D2'
@@ -1238,6 +1247,46 @@ function loopBoxMove () {
       })
     }
   }
+}
+
+// D3线的
+function D3LoopLineMove () {
+  // if (STATE.D3RunArr[0]?.userData?.type) {
+  STATE.D3RunArr.forEach((box, i) => {
+    if (box.userData.index > i * 50) {
+      box.userData.index--
+      try {
+        box.lookAt(new Bol3D.Vector3(...STATE.lineObjects.D3[box.userData.index]))
+        box.position.set(...STATE.lineObjects.D3[box.userData.index])
+      } catch (e) { }
+    }
+    if (box.userData.index == 0 && box.userData.type) {
+      box.userData.lineName = 'E1'
+      box.userData.index = STATE.lineObjects['E1'].length - 2
+      STATE.D3RunArr.splice(i, 1)
+      const cloneBox = STATE.D3RunArr[STATE.D3RunArr.length - 1].clone()
+      cloneBox.position.set(...STATE.lineObjects.D3[STATE.D3RunArr.length * 50])
+      cloneBox.userData.index = 50 * STATE.D3RunArr.length
+      cloneBox.userData.lineName = 'D3'
+      cloneBox.rotation.y = -Math.PI / 2
+      cloneBox.children.forEach(e => {
+        e.material = e.material.clone()
+        e.material.transparent = true
+        e.material.opacity = 0
+        new Bol3D.TWEEN.Tween(e.material).to({
+          opacity: 1
+        }, 3000).start().onComplete(() => {
+          e.material.transparent = false
+          e.material.opacity = 1
+        })
+      })
+      STATE.D3RunArr.push(cloneBox)
+      CACHE.container.attach(cloneBox)
+      STATE.loopBoxArr.push(box)
+
+    }
+  })
+  // }
 }
 
 // 计算支线的起点在主线的索引
@@ -1408,13 +1457,13 @@ function addReflector () {
   container.attach(mirro)
 }
 
-// 12小时刷新一次
+// 6小时刷新一次
 function reload () {
   setTimeout(() => {
     document.cookie = `position=${JSON.stringify(container.orbitCamera.position)}`
     document.cookie = `target=${JSON.stringify(container.orbitControls.target)}`
     location.reload()
-  }, 1000 * 60 * 60 * 12)
+  }, 1000 * 60 * 60 * 6)
 }
 
 function render () {
@@ -1436,6 +1485,7 @@ function render () {
     danCkBoxMove()
     duoCkBoxMove()
     loopBoxMove()
+    D3LoopLineMove()
     STATE.times = 0
   }
 }

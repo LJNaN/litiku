@@ -606,7 +606,9 @@ const lineObjects = {},
     },
   },
   clock = new Bol3D.Clock(true),
-  renderT = 1 / 20
+  renderT = 1 / 20,
+  D3RunArr = []
+
 
 
 export const STATE = {
@@ -639,5 +641,6 @@ export const STATE = {
   lianjie,
   clock,
   renderT,
+  D3RunArr,
   times
 }

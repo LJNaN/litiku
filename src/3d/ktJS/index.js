@@ -783,6 +783,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
             STATE.lineObjects[child.name] = arr
           }
         })
+
       } else if (model.name == 'jxsb') {
         for (const key in STATE.jxsbObject) {
           const modelClone = Bol3D.SkeletonUtils.clone(model)
@@ -847,6 +848,22 @@ export const sceneOnLoad = ({ domElement, callback }) => {
         CACHE.container.attach(STATE.loopRoadway[i].liaoxiang)
         liaoxiang.position.set(...STATE.loopRoadway[i].position)
       }
+      // D3上的料箱
+      for (let i = 0; i < STATE.lineObjects.D3.length / 50; i++) {
+        const liaoxiang = STATE.sceneModel['pmtuopan'].clone()
+        for (let j = 0; j < liaoxiang.children.length; j++) {
+          if (liaoxiang.children[j].name != 'pmtuopan001') {
+            liaoxiang.remove(liaoxiang.children[j])
+            j--
+          }
+        }
+        STATE.D3RunArr.push(liaoxiang)
+        CACHE.container.attach(liaoxiang)
+        liaoxiang.position.set(...STATE.lineObjects.D3[i * 50 + 10])
+        liaoxiang.userData.index = 50 * i + 10
+        liaoxiang.userData.lineName = 'D3'
+        liaoxiang.rotation.y = -Math.PI / 2
+      }
 
       // remove unused obj3d
       for (const i in CACHE.removed) {
@@ -889,6 +906,8 @@ export const sceneOnLoad = ({ domElement, callback }) => {
       }
 
       window.STATE = STATE
+
+
 
 
       // API.loadGUI()
