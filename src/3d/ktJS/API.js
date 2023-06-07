@@ -305,11 +305,7 @@ function clearClick (model) {
 }
 
 
-let chuku = 0
-let zhuaqu = 0
 // 获取数据
-
-// let iii = 0
 function getData () {
   // websocket 推三维数据
   let wsMessage = null
@@ -322,17 +318,18 @@ function getData () {
   ws.onmessage = function (e) {
     wsMessage = JSON.parse(e.data)
     driver(wsMessage)
-
   }
   // ===================================================
 
 
   // ===================线下模拟的=======================
+  // let mockIndex = 0
   // setInterval(() => {
-  //   driver(mockData[iii])
-  //   iii++
-  // }, 1000)
-
+  //   driver(mockData[mockIndex])
+  //   
+  //   mockIndex++
+  //   if (mockIndex === mockData.length - 1) mockIndex = 0
+  // }, 100)
   // ===================================================
 
   function driver (wsMessage) {
@@ -377,7 +374,6 @@ function getData () {
               EquValue: wsMessage.EquValue // 托盘编号
             })
           } else { // 多品出库
-            chuku++
             ddjAnimetion(STATE.roadway[baffle].machine, 3, () => {
               const mesh = addMesh()
               mesh.userData.lineName = STATE.roadway[baffle].duoLineName
@@ -441,7 +437,6 @@ function getData () {
           const baffle = [8, 7, 6, 5, 4, 3, 2, 1].findIndex(e => e === machineCode) * 2 + direction - 1
           const mesh = STATE.duoBoxArr.find(e => e.userData.code == code)
           if (mesh) {
-            zhuaqu++
             mesh.userData.catch = true
             mesh.userData.baffle = baffle
           }
@@ -462,13 +457,14 @@ function getData () {
             STATE.D3RunArr[0].parent.remove(STATE.D3RunArr[0])
             STATE.D3RunArr.splice(0, 1)
           }
-          if (!STATE.D3RunArr[0].userData.type) {
-            if (wsMessage.Dest === '手机料箱') STATE.D3RunArr[0].userData.type = 'phone'
-            else STATE.D3RunArr[0].userData.type = 'ipad'
+          for (let i = 0; i < STATE.D3RunArr.length; i++) {
+            if (STATE.D3RunArr[i].visible && !STATE.D3RunArr[i].userData.type) {
+              if (wsMessage.Dest === '手机料箱') STATE.D3RunArr[i].userData.type = 'phone'
+              else STATE.D3RunArr[i].userData.type = 'ipad'
+              STATE.D3RunArr[i].userData.back = true
+              break
+            }
           }
-          STATE.D3RunArr[0].userData.back = true
-
-
         }
       }
     }
@@ -879,38 +875,40 @@ function duoCkBoxMove () {
             userData.isFirstLoop = false
 
             // 动画嵌套
-            if (STATE.duoBoxArr[i]) {
-              new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
-                .to({
-                  y: STATE.duoBoxArr[i].position.y + 0.02
-                }, 500).start()
+            try {
+              if (STATE.duoBoxArr[i]) {
+                new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
+                  .to({
+                    y: STATE.duoBoxArr[i].position.y + 0.02
+                  }, 500).start()
 
-              new Bol3D.TWEEN.Tween(STATE.lianjie.position)
-                .to({
-                  y: 0.02
-                }, 500).start().onComplete(() => {
+                new Bol3D.TWEEN.Tween(STATE.lianjie.position)
+                  .to({
+                    y: 0.02
+                  }, 500).start().onComplete(() => {
 
-                  new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
-                    .to({
-                      x: -1.25,
-                      z: STATE.lineObjects['C3'][0][2]
-                    }, 500).start().onComplete(() => {
+                    new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
+                      .to({
+                        x: -1.25,
+                        z: STATE.lineObjects['C3'][0][2]
+                      }, 500).start().onComplete(() => {
 
-                      new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
-                        .to({
-                          y: STATE.duoBoxArr[i].position.y - 0.02
-                        }, 500).start()
+                        new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
+                          .to({
+                            y: STATE.duoBoxArr[i].position.y - 0.02
+                          }, 500).start()
 
-                      new Bol3D.TWEEN.Tween(STATE.lianjie.position)
-                        .to({
-                          y: 0
-                        }, 500).start().onComplete(() => {
-                          userData.index = 0
-                          userData.lineName = 'C3'
-                        })
-                    })
-                })
-            }
+                        new Bol3D.TWEEN.Tween(STATE.lianjie.position)
+                          .to({
+                            y: 0
+                          }, 500).start().onComplete(() => {
+                            userData.index = 0
+                            userData.lineName = 'C3'
+                          })
+                      })
+                  })
+              }
+            } catch (e) { }
           }
         }
       } else if (userData.index == machine.index + 20) {
@@ -1201,6 +1199,8 @@ function loopBoxMove () {
         else if (userData.dest == 3137) D3RunArrIndex = 37
 
         STATE.D3RunArr[D3RunArrIndex].visible = true
+        STATE.D3RunArr[D3RunArrIndex].userData.back = true
+        STATE.D3RunArr[D3RunArrIndex].userData.type = 'phone'
 
 
         // else if (userData.dest == 3137) STATE.D3RunArr[37].visible = true
@@ -1268,31 +1268,33 @@ function loopBoxMove () {
       }
 
     } else if (userData.lineName == 'E1') {
+
       if (userData.index == 69 && userData.type == 'phone') {
         userData.lineName = 'D2'
         userData.index = 0
       } else if (userData.index == 15) {
         if (STATE.loopBoxArr[i]) {
           userData.lineName = ''
-          new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
+          const animation = new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
             x: 6.55921422283932
-          }, 3000).start().onComplete(() => {
-            try {
-              if (!STATE.loopRoadway[0].liaoxiang) {
-                const cloneBox = STATE.sceneModel['dapmtuopan'].clone()
-                CACHE.container.attach(cloneBox)
-                cloneBox.position.set(...STATE.loopRoadway[0].position)
-              } else if (!STATE.loopRoadway[1].liaoxiang) {
-                const cloneBox = STATE.sceneModel['dapmtuopan'].clone()
-                CACHE.container.attach(cloneBox)
-                cloneBox.position.set(...STATE.loopRoadway[1].position)
-              }
-              STATE.loopBoxArr[i].parent.remove(STATE.loopBoxArr[i])
-              STATE.loopBoxArr.splice(i, 1)
-              i--
-            } catch (e) {
-
+          }, 3000)
+          animation.start()
+          const currentBox = STATE.loopBoxArr[i]
+          STATE.loopBoxArr.splice(i, 1)
+          i--
+          animation.onComplete(() => {
+            if (!STATE.loopRoadway[0].liaoxiang) {
+              const cloneBox = STATE.sceneModel['dapmtuopan'].clone()
+              CACHE.container.attach(cloneBox)
+              cloneBox.position.set(...STATE.loopRoadway[0].position)
+              STATE.loopRoadway[0].liaoxiang = cloneBox
+            } else if (!STATE.loopRoadway[1].liaoxiang) {
+              const cloneBox = STATE.sceneModel['dapmtuopan'].clone()
+              CACHE.container.attach(cloneBox)
+              cloneBox.position.set(...STATE.loopRoadway[1].position)
+              STATE.loopRoadway[1].liaoxiang = cloneBox
             }
+            currentBox.parent.remove(currentBox)
           })
         }
       }
@@ -1311,11 +1313,14 @@ function loopBoxMove () {
 
 // D3线的
 function D3LoopLineMove () {
-  STATE.D3RunArr.forEach((box, i) => {
+  for (let i = 0; i < STATE.D3RunArr.length; i++) {
+    const box = STATE.D3RunArr[i]
+
     if (i === 0 && !box.visible) {
       box.parent.remove(box)
       STATE.D3RunArr.splice(0, 1)
-      return
+      i--
+      continue
     }
 
     if (box.userData.index > i * 25) {
@@ -1326,17 +1331,18 @@ function D3LoopLineMove () {
       } catch (e) { }
     }
     if (box.userData.index == 0 && box.userData.type) {
+
       if (box.userData.type != 'phone') {
         // 变为大托盘
         const cloneBox = STATE.sceneModel['dapmtuopan'].clone()
-
-
         box.children[0].geometry = cloneBox.children[0].children[0].geometry.clone()
         box.children[0].material = cloneBox.children[0].children[0].material.clone()
       }
       box.userData.lineName = 'E1'
       box.userData.index = STATE.lineObjects['E1'].length - 2
+      STATE.loopBoxArr.push(box)
       STATE.D3RunArr.splice(i, 1)
+      i--
       if (STATE.D3RunArr.length <= STATE.lineObjects.D3.length / 25) {
         const cloneBox = STATE.D3RunArr[STATE.D3RunArr.length - 1].clone()
         cloneBox.visible = false
@@ -1364,10 +1370,9 @@ function D3LoopLineMove () {
         CACHE.container.attach(cloneBox2)
         STATE.D3RunArr.push(cloneBox)
         CACHE.container.attach(cloneBox)
-        STATE.loopBoxArr.push(box)
       }
     }
-  })
+  }
 }
 
 // 计算支线的起点在主线的索引
@@ -1566,26 +1571,22 @@ function render () {
     danCkBoxMove()
     duoCkBoxMove()
     loopBoxMove()
-    loopBoxMove()
-    loopBoxMove()
-    loopBoxMove()
-    loopBoxMove()
     D3LoopLineMove()
+    danCkBoxMove()
+    duoCkBoxMove()
     loopBoxMove()
     D3LoopLineMove()
+    danCkBoxMove()
+    duoCkBoxMove()
     loopBoxMove()
     D3LoopLineMove()
+    danCkBoxMove()
+    duoCkBoxMove()
     loopBoxMove()
     D3LoopLineMove()
+    danCkBoxMove()
+    duoCkBoxMove()
     loopBoxMove()
-    D3LoopLineMove()
-    loopBoxMove()
-    D3LoopLineMove()
-    loopBoxMove()
-    D3LoopLineMove()
-    D3LoopLineMove()
-    D3LoopLineMove()
-    D3LoopLineMove()
     D3LoopLineMove()
     STATE.times = 0
   }

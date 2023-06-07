@@ -7,9 +7,19 @@
 
 <script setup>
 import router from "@/2d/router/index"
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 let hidden = ref(false)
+let is2dHidden = document.cookie.replace(/(?:(?:^|.*;\s*)is2dhidden\s*\=\s*([^;]*).*$)|^.*$/, "$1")
+is2dHidden = is2dHidden && JSON.parse(is2dHidden)
 
+
+onMounted(() => {
+  setTimeout(() => {
+    if (is2dHidden) {
+      handleHidden()
+    }
+  }, 2000)
+})
 
 watch(
   () => router.currentRoute.value.path,
@@ -23,11 +33,14 @@ watch(
 )
 
 function handleHidden () {
+
   const left = document.getElementById('leftBar')
+
   const right = document.getElementById('rightBar')
   const bottom = document.getElementById('bottomBar')
   const hideenIcon = document.getElementById('hideenIcon')
   if (left && right && bottom) {
+
     hidden.value = !hidden.value
     left.style.animation = ''
     right.style.animation = ''
@@ -38,6 +51,7 @@ function handleHidden () {
       right.style.animation = `0.5s ease 0s 1 ${hidden.value ? 'reverse' : 'normal'} both running right-in`
       bottom.style.animation = `0.5s ease 0s 1 ${hidden.value ? 'reverse' : 'normal'} both running bottom-in`
       hideenIcon.style.animation = `0.5s ease 0s 1 ${hidden.value ? 'reverse' : 'normal'} both running icon-in`
+      document.cookie = `is2dhidden=${hidden.value}`
     }, 0)
   }
 }
