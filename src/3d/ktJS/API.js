@@ -875,40 +875,43 @@ function duoCkBoxMove () {
             userData.isFirstLoop = false
 
             // 动画嵌套
-            try {
-              if (STATE.duoBoxArr[i]) {
-                new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
-                  .to({
-                    y: STATE.duoBoxArr[i].position.y + 0.02
-                  }, 500).start()
+            if (STATE.duoBoxArr[i]) {
+              new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
+                .to({
+                  y: STATE.duoBoxArr[i].position.y + 0.02
+                }, 500).start()
 
-                new Bol3D.TWEEN.Tween(STATE.lianjie.position)
-                  .to({
-                    y: 0.02
-                  }, 500).start().onComplete(() => {
+              new Bol3D.TWEEN.Tween(STATE.lianjie.position)
+                .to({
+                  y: 0.02
+                }, 500).start().onComplete(() => {
 
+                  if (STATE.duoBoxArr[i]) {
                     new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
                       .to({
                         x: -1.25,
                         z: STATE.lineObjects['C3'][0][2]
                       }, 500).start().onComplete(() => {
 
-                        new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
-                          .to({
-                            y: STATE.duoBoxArr[i].position.y - 0.02
-                          }, 500).start()
+                        if (STATE.duoBoxArr[i]) {
+                          new Bol3D.TWEEN.Tween(STATE.duoBoxArr[i].position)
+                            .to({
+                              y: STATE.duoBoxArr[i].position.y - 0.02
+                            }, 500).start()
 
-                        new Bol3D.TWEEN.Tween(STATE.lianjie.position)
-                          .to({
-                            y: 0
-                          }, 500).start().onComplete(() => {
-                            userData.index = 0
-                            userData.lineName = 'C3'
-                          })
+                          new Bol3D.TWEEN.Tween(STATE.lianjie.position)
+                            .to({
+                              y: 0
+                            }, 500).start().onComplete(() => {
+                              userData.index = 0
+                              userData.lineName = 'C3'
+                            })
+                        }
                       })
-                  })
-              }
-            } catch (e) { }
+                  }
+                })
+            }
+
           }
         }
       } else if (userData.index == machine.index + 20) {
@@ -1568,22 +1571,6 @@ function render () {
       rkBoxMove()
     }
 
-    danCkBoxMove()
-    duoCkBoxMove()
-    loopBoxMove()
-    D3LoopLineMove()
-    danCkBoxMove()
-    duoCkBoxMove()
-    loopBoxMove()
-    D3LoopLineMove()
-    danCkBoxMove()
-    duoCkBoxMove()
-    loopBoxMove()
-    D3LoopLineMove()
-    danCkBoxMove()
-    duoCkBoxMove()
-    loopBoxMove()
-    D3LoopLineMove()
     danCkBoxMove()
     duoCkBoxMove()
     loopBoxMove()
