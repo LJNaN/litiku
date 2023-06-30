@@ -311,25 +311,25 @@ function getData () {
   let wsMessage = null
 
   // ====================线上真实的=====================
-  const ws = new WebSocket(
-    // `ws://127.0.0.1:8001/`
-    `ws://192.168.8.170:5443/null`
-  )
-  ws.onmessage = function (e) {
-    wsMessage = JSON.parse(e.data)
-    driver(wsMessage)
-  }
+  // const ws = new WebSocket(
+  //   // `ws://127.0.0.1:8001/`
+  //   `ws://192.168.8.170:5443/null`
+  // )
+  // ws.onmessage = function (e) {
+  //   wsMessage = JSON.parse(e.data)
+  //   driver(wsMessage)
+  // }
   // ===================================================
 
 
   // ===================线下模拟的=======================
-  // let mockIndex = 0
-  // setInterval(() => {
-  //   driver(mockData[mockIndex])
-  //   
-  //   mockIndex++
-  //   if (mockIndex === mockData.length - 1) mockIndex = 0
-  // }, 100)
+  let mockIndex = 0
+  setInterval(() => {
+    driver(mockData[mockIndex])
+
+    mockIndex++
+    if (mockIndex === mockData.length - 1) mockIndex = 0
+  }, 100)
   // ===================================================
 
   function driver (wsMessage) {
@@ -1052,6 +1052,8 @@ function lxBoxMove (liaoxiangOpt) {
   liaoxiang.userData.dest = dest
   liaoxiang.userData.baffle = baffle
   liaoxiang.userData.type = baffle < 3 ? 'ipad' : 'phone'
+
+
   if (liaoxiang.userData.type === 'phone') {
 
     const shouji = liaoxiang.children.find(e => e.name === 'shouji001')
@@ -1112,6 +1114,7 @@ function loopBoxMove () {
     // }
     if (userData.lineName == 'D1') {
 
+      // 如果是已经捡完之后的
       if (userData.back) {
         for (let j = STATE.loopRoadway.length - 1; j >= 2; j--) {
           if (STATE.loopRoadway[j].liaoxiang == null) {
@@ -1148,7 +1151,7 @@ function loopBoxMove () {
           }
         }
 
-      } else if (userData.baffle >= 10 && userData.index == 674) {
+      } else if (userData.baffle >= 10 && userData.index == 674 && [3133, 3135, 3137].includes(userData.dest)) { // 到匝道之后往下走 最右边的几个
         if (STATE.loopBoxArr[i]) {
           userData.lineName = ''
           new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
@@ -1160,7 +1163,7 @@ function loopBoxMove () {
             userData.index = 678
           })
         }
-      } else if (userData.baffle >= 5 && userData.index == 415) {
+      } else if (userData.baffle >= 5 && userData.index == 415 && [3129, 3131].includes(userData.dest)) {  // 到匝道之后往下走 中间的几个
         if (STATE.loopBoxArr[i]) {
           userData.lineName = ''
           new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
@@ -1361,11 +1364,12 @@ function D3LoopLineMove () {
           e.material = e.material.clone()
           e.material.transparent = true
           e.material.opacity = 0
+          const { transparent, opacity } = STATE.D3RunArr[0].children[0].material
           new Bol3D.TWEEN.Tween(e.material).to({
-            opacity: 1
-          }, 3000).start().onComplete(() => {
-            e.material.transparent = false
-            e.material.opacity = 1
+            opacity: opacity
+          }, 300).start().onComplete(() => {
+            e.material.transparent = transparent
+            e.material.opacity = opacity
           })
         })
 
@@ -1500,6 +1504,32 @@ export function showModel (index) {
           }
         })
     }
+  }
+
+  // 以前的动不了了，新开一点逻辑，主要处理程序里面 clone() 的模型
+  const arr = [STATE.D3RunArr, STATE.loopBoxArr, STATE.danBoxArr, STATE.duoBoxArr, STATE.rkBoxArr]
+  if (index === -1) {
+    arr.forEach(group => {
+      group.forEach(e => {
+        e.traverse(child => {
+          if (child.isMesh) {
+            child.material.transparent = false
+            child.material.opacity = 1
+          }
+        })
+      })
+    })
+  } else {
+    arr.forEach(group => {
+      group.forEach(e => {
+        e.traverse(child => {
+          if (child.isMesh) {
+            child.material.transparent = true
+            child.material.opacity = 0.1
+          }
+        })
+      })
+    })
   }
 }
 

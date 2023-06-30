@@ -926,7 +926,12 @@ export const sceneOnLoad = ({ domElement, callback }) => {
   })
 
   const events = new Bol3D.Events(container)
-  events.ondbclick = (e) => { }
+  events.ondbclick = (e) => {
+    if (e.objects.length) {
+      console.log(e.objects[0].object)
+
+    }
+  }
   events.onhover = (e) => { }
   events.enabled.hover = false
 
