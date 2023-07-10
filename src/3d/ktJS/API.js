@@ -113,6 +113,40 @@ function loadGUI () {
     })
   scenesFolder.add(CACHE.container.directionLights[0], 'intensity').step(0.01).min(0).max(3)
 
+  // floor
+  const floorFolder = gui.addFolder('地板')
+  var floorOption = { color: 0xffffff, emissive: 0xffffff }
+  console.log('CACHE.dipi.material: ', CACHE.dipi.material)
+  floorFolder
+    .addColor(floorOption, 'color')
+    .onChange((val) => {
+      console.log('val: ', val)
+      CACHE.dipi.material.color = new Bol3D.Color(val)
+    })
+    .name('地板颜色')
+
+  floorFolder
+    .addColor(floorOption, 'emissive')
+    .onChange((val) => {
+      console.log('val: ', val)
+      CACHE.dipi.material.emissive = new Bol3D.Color(val)
+    })
+    .name('emissive颜色')
+
+  floorFolder
+    .add(CACHE.dipi.material, 'roughness')
+    .onChange((val) => {
+      CACHE.dipi.material.roughness = val
+    })
+    .name('roughness')
+
+  floorFolder
+    .add(CACHE.dipi.material, 'metalness')
+    .onChange((val) => {
+      CACHE.dipi.material.metalness = val
+    })
+    .name('metalness')
+
 
   // filter pass
   const filterFolder = gui.addFolder('滤镜')
@@ -1104,7 +1138,7 @@ function loopBoxMove () {
     if (userData.lineName == 'D1' || userData.lineName == 'E1') userData.index--
     else userData.index++
     try {
-      STATE.loopBoxArr[i].lookAt(new Bol3D.Vector3(...STATE.lineObjects[userData.lineName][userData.index]))
+      STATE.loopBoxArr[i].rotation.y = 0
       STATE.loopBoxArr[i].position.set(...STATE.lineObjects[userData.lineName][userData.index])
     } catch (e) { }
     // if (userData.lineName == 'D2') {
@@ -1304,15 +1338,32 @@ function loopBoxMove () {
           })
         }
       }
-    } else if (userData.lineName == 'D2' && userData.index == STATE.lineObjects['D2'].length - 3) {
-      STATE.lineObjects['D2'].visible = false
-      userData.lineName = ''
-      tsjAnimetion(true, () => {
-        STATE.lineObjects['D2'].visible = true
-        userData.lineName = 'D1'
-        userData.index = STATE.lineObjects['D1'].length - 2
-        tsjAnimetion(false)
-      })
+    } else if (userData.lineName == 'D2') {
+      // 为了让提升机不打挤
+      if (STATE.loopBoxArr[i]) {
+        const currentBox = STATE.loopBoxArr[i]
+        const D2BoxArr = STATE.loopBoxArr.filter(e => e.userData.lineName === 'D2')
+        for (let j = 0; j < D2BoxArr.length; j++) {
+          if (j === 0) {
+            if (userData.index == STATE.lineObjects['D2'].length - 10) {
+              STATE.lineObjects['D2'].visible = false
+              currentBox.visible = false
+              tsjAnimetion(true, () => {
+                currentBox.visible = true
+                STATE.lineObjects['D2'].visible = true
+                userData.lineName = 'D1'
+                userData.index = STATE.lineObjects['D1'].length - 2
+                tsjAnimetion(false)
+              })
+            }
+          } else {
+            if (D2BoxArr[j].userData.index > STATE.lineObjects['D2'].length - 25 * j) {
+              D2BoxArr[j].userData.index--
+            }
+          }
+        }
+
+      }
     }
   }
 }
@@ -1332,7 +1383,7 @@ function D3LoopLineMove () {
     if (box.userData.index > i * 25) {
       box.userData.index--
       try {
-        box.lookAt(new Bol3D.Vector3(...STATE.lineObjects.D3[box.userData.index]))
+        box.rotation.y = 0
         box.position.set(...STATE.lineObjects.D3[box.userData.index])
       } catch (e) { }
     }
@@ -1603,6 +1654,16 @@ function render () {
 
     danCkBoxMove()
     duoCkBoxMove()
+    loopBoxMove()
+    D3LoopLineMove()
+    loopBoxMove()
+    D3LoopLineMove()
+    loopBoxMove()
+    D3LoopLineMove()
+    loopBoxMove()
+    D3LoopLineMove()
+    loopBoxMove()
+    D3LoopLineMove()
     loopBoxMove()
     D3LoopLineMove()
     STATE.times = 0
