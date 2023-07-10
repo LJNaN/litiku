@@ -12,13 +12,13 @@ import '@/2d/assets/font/font.css'
 
 
 const app = createApp(App)
-app.config.globalProperties.$isOurSite = true  // 控制是否是官网数据
+app.config.globalProperties.$isOurSite = false  // 控制是否是官网数据
 
 
 app.component(Chart.name, Chart);
 app.component('CardChunk', CardChunk);
 app.use(ElementPlus).use(router)
 
-// if(new Date().getTime() < 1689379200000) {
+if(new Date().getTime() < 1689379200000) {
   app.mount('#app')
-// }
+}

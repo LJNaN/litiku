@@ -116,11 +116,9 @@ function loadGUI () {
   // floor
   const floorFolder = gui.addFolder('地板')
   var floorOption = { color: 0xffffff, emissive: 0xffffff }
-  console.log('CACHE.dipi.material: ', CACHE.dipi.material)
   floorFolder
     .addColor(floorOption, 'color')
     .onChange((val) => {
-      console.log('val: ', val)
       CACHE.dipi.material.color = new Bol3D.Color(val)
     })
     .name('地板颜色')
@@ -128,7 +126,7 @@ function loadGUI () {
   floorFolder
     .addColor(floorOption, 'emissive')
     .onChange((val) => {
-      console.log('val: ', val)
+
       CACHE.dipi.material.emissive = new Bol3D.Color(val)
     })
     .name('emissive颜色')
@@ -345,25 +343,25 @@ function getData () {
   let wsMessage = null
 
   // ====================线上真实的=====================
-  // const ws = new WebSocket(
-  //   // `ws://127.0.0.1:8001/`
-  //   `ws://192.168.8.170:5443/null`
-  // )
-  // ws.onmessage = function (e) {
-  //   wsMessage = JSON.parse(e.data)
-  //   driver(wsMessage)
-  // }
+  const ws = new WebSocket(
+    // `ws://127.0.0.1:8001/`
+    `ws://192.168.8.170:5443/null`
+  )
+  ws.onmessage = function (e) {
+    wsMessage = JSON.parse(e.data)
+    driver(wsMessage)
+  }
   // ===================================================
 
 
   // ===================线下模拟的=======================
-  let mockIndex = 0
-  setInterval(() => {
-    driver(mockData[mockIndex])
+  // let mockIndex = 0
+  // setInterval(() => {
+  //   driver(mockData[mockIndex])
 
-    mockIndex++
-    if (mockIndex === mockData.length - 1) mockIndex = 0
-  }, 100)
+  //   mockIndex++
+  //   if (mockIndex === mockData.length - 1) mockIndex = 0
+  // }, 100)
   // ===================================================
 
   function driver (wsMessage) {
