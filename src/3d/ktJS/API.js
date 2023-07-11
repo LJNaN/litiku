@@ -1654,16 +1654,6 @@ function render () {
     duoCkBoxMove()
     loopBoxMove()
     D3LoopLineMove()
-    loopBoxMove()
-    D3LoopLineMove()
-    loopBoxMove()
-    D3LoopLineMove()
-    loopBoxMove()
-    D3LoopLineMove()
-    loopBoxMove()
-    D3LoopLineMove()
-    loopBoxMove()
-    D3LoopLineMove()
     STATE.times = 0
   }
 }

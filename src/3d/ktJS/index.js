@@ -235,6 +235,13 @@ export const sceneOnLoad = ({ domElement, callback }) => {
       if (!CACHE.container) CACHE.container = evt
       STATE.sceneModel[model.name] = model
 
+      // 滚动棒调颜色
+      model.traverse(child => {
+        if (child.isMesh && child.name.includes('Cylinder')) {
+          child.material.color = new Bol3D.Color(child.material.color.r * 0.8, child.material.color.g * 0.8, child.material.color.b * 0.8)
+        }
+      })
+
       if (model.name == 'rukuxian') {
         // mesh instance
         model.traverse((child) => {
@@ -838,6 +845,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
     },
     onLoad: (evt) => {
       window.container = evt
+      window.CACHE = CACHE
       // API.addReflector()
 
 
