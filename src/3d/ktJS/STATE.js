@@ -14,6 +14,7 @@ let rkPasue = false,
   thisBoxWSMessage = {},
   tempThisBoxWSMessage = {},
   times = 0,
+  tsjReady = true,
   slow = false
 
 const lineObjects = {},
@@ -642,5 +643,6 @@ export const STATE = {
   clock,
   renderT,
   D3RunArr,
+  tsjReady,
   times
 }

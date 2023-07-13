@@ -1133,17 +1133,17 @@ function loopBoxMove () {
   for (let i = 0; i < STATE.loopBoxArr.length; i++) {
     let { userData } = STATE.loopBoxArr[i]
     if (!userData.lineName) continue
-    if (userData.lineName == 'D1' || userData.lineName == 'E1') userData.index--
-    else userData.index++
+    if (userData.lineName == 'D1' || userData.lineName == 'E1') {
+      userData.index--
+    } else if (userData.lineName == 'D2') {
+      //
+    } else userData.index++
     try {
-      STATE.loopBoxArr[i].rotation.y = 0
-      STATE.loopBoxArr[i].position.set(...STATE.lineObjects[userData.lineName][userData.index])
+      if (userData.lineName != 'D2') {
+        STATE.loopBoxArr[i].rotation.y = 0
+        STATE.loopBoxArr[i].position.set(...STATE.lineObjects[userData.lineName][userData.index])
+      }
     } catch (e) { }
-    // if (userData.lineName == 'D2') {
-    //   STATE.loopBoxArr[i].rotation.y = 0
-    // } else {
-    //   STATE.loopBoxArr[i].rotation.y = -Math.PI / 2
-    // }
     if (userData.lineName == 'D1') {
 
       // 如果是已经捡完之后的
@@ -1340,27 +1340,67 @@ function loopBoxMove () {
       // 为了让提升机不打挤
       if (STATE.loopBoxArr[i]) {
         const currentBox = STATE.loopBoxArr[i]
-        const D2BoxArr = STATE.loopBoxArr.filter(e => e.userData.lineName === 'D2')
-        for (let j = 0; j < D2BoxArr.length; j++) {
-          if (j === 0) {
-            if (userData.index == STATE.lineObjects['D2'].length - 10) {
-              STATE.lineObjects['D2'].visible = false
-              currentBox.visible = false
-              tsjAnimetion(true, () => {
-                currentBox.visible = true
-                STATE.lineObjects['D2'].visible = true
-                userData.lineName = 'D1'
-                userData.index = STATE.lineObjects['D1'].length - 2
-                tsjAnimetion(false)
+        const d2BoxArr = STATE.loopBoxArr.filter(box => box.userData.lineName == 'D2')
+        const d2Index = d2BoxArr.findIndex(box => box.uuid == currentBox.uuid)
+
+
+        if (STATE.tsjReady) {
+          try {
+            currentBox.userData.index++
+            currentBox.rotation.y = 0
+            currentBox.position.set(...STATE.lineObjects[userData.lineName][userData.index])
+          } catch (e) { }
+
+          if (currentBox.userData.index > STATE.lineObjects['D2'].length - 15) {
+            STATE.tsjReady = false
+            currentBox.userData.lineName = ''
+
+            new Bol3D.TWEEN.Tween(currentBox.position).to({
+              y: 0.795967
+            }, 1000).start()
+
+            tsjAnimetion(true, () => {
+              STATE.lineObjects['D2'].visible = true
+              currentBox.userData.lineName = 'D1'
+              currentBox.userData.index = STATE.lineObjects['D1'].length - 2
+              tsjAnimetion(false, () => {
+                STATE.tsjReady = true
               })
-            }
-          } else {
-            if (D2BoxArr[j].userData.index > STATE.lineObjects['D2'].length - 25 * j) {
-              D2BoxArr[j].userData.index--
-            }
+            })
+          }
+        } else {
+          if (currentBox.userData.index <= (STATE.lineObjects['D2'].length - 25 * d2Index) - 40) {
+            try {
+              currentBox.userData.index++
+              currentBox.rotation.y = 0
+              currentBox.position.set(...STATE.lineObjects[userData.lineName][userData.index])
+            } catch (e) { }
           }
         }
 
+
+        // if (STATE.tsjReady) {
+        //   STATE.tsjReady = false
+        //   if (currentBox.userData.index > STATE.lineObjects['D2'].length - 13) {
+        //     STATE.lineObjects['D2'].visible = false
+        //     new Bol3D.TWEEN.Tween(currentBox.position).to({
+        //       y: 0.795967
+        //     }, 1000).start()
+
+        //     setTimeout(() => {
+        //       STATE.tsjReady = true
+        //     }, 2000)
+
+        //     tsjAnimetion(true, () => {
+        //       STATE.lineObjects['D2'].visible = true
+        //       currentBox.userData.lineName = 'D1'
+        //       currentBox.userData.index = STATE.lineObjects['D1'].length - 2
+        //       tsjAnimetion(false)
+        //     })
+        //   } else if (currentBox.userData.index > STATE.lineObjects['D2'].length - 12) {
+        //     currentBox.userData.index--
+        //   }
+        // }
       }
     }
   }
