@@ -1357,16 +1357,17 @@ function loopBoxMove () {
 
             new Bol3D.TWEEN.Tween(currentBox.position).to({
               y: 0.795967
-            }, 1000).start()
-
-            tsjAnimetion(true, () => {
-              STATE.lineObjects['D2'].visible = true
+            }, 1000).start().onComplete(() => {
               currentBox.userData.lineName = 'D1'
-              currentBox.userData.index = STATE.lineObjects['D1'].length - 2
-              tsjAnimetion(false, () => {
-                STATE.tsjReady = true
-              })
+              currentBox.userData.index = STATE.lineObjects['D1'].length - 15
+              setTimeout(() => {
+                tsjAnimetion(false, () => {
+                  STATE.tsjReady = true
+                })
+              }, 700)
             })
+
+            tsjAnimetion(true)
           }
         } else {
           if (currentBox.userData.index <= (STATE.lineObjects['D2'].length - 25 * d2Index) - 40) {
@@ -1442,6 +1443,7 @@ function D3LoopLineMove () {
         const cloneBox = STATE.D3RunArr[STATE.D3RunArr.length - 1].clone()
         cloneBox.visible = false
         cloneBox.position.set(...STATE.lineObjects.D3[STATE.D3RunArr.length * 25])
+        cloneBox.rotation.y = 0
         cloneBox.userData.index = 25 * STATE.D3RunArr.length
         cloneBox.userData.lineName = 'D3'
         cloneBox.rotation.y = -Math.PI / 2

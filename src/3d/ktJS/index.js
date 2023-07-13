@@ -237,7 +237,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
 
       // 滚动棒调颜色
       model.traverse(child => {
-        if (child.isMesh && child.name.includes('Cylinder')) {
+        if (child.isMesh && (child.name.includes('Cylinder') || child.name === 'tishengji_2')) {
           child.material.color = new Bol3D.Color(child.material.color.r * 0.8, child.material.color.g * 0.8, child.material.color.b * 0.8)
         }
       })
@@ -738,7 +738,7 @@ export const sceneOnLoad = ({ domElement, callback }) => {
 
         // scan弹窗
         model.traverse(child => {
-          if (child.isMesh && child.name === 'tishengji') STATE.tishengji = child
+          if (child.name === 'tishengji') STATE.tishengji = child
           if (child.isMesh && (child.name === '对象157' || child.name === '对象158' || child.name === '对象159')) {
             STATE.tempClickObjects.push(child)
             child.userData.setScan = API.rkScan({
@@ -870,9 +870,9 @@ export const sceneOnLoad = ({ domElement, callback }) => {
         CACHE.container.attach(liaoxiang)
         if (i % 2 != 0) liaoxiang.visible = false
         liaoxiang.position.set(...STATE.lineObjects.D3[i * 25])
+        liaoxiang.rotation.y = 0
         liaoxiang.userData.index = 25 * i
         liaoxiang.userData.lineName = 'D3'
-        liaoxiang.rotation.y = -Math.PI / 2
       }
 
       // remove unused obj3d
