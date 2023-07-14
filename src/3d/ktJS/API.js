@@ -1435,6 +1435,7 @@ function D3LoopLineMove () {
         box.children[0].material = cloneBox.children[0].children[0].material.clone()
       }
       box.userData.lineName = 'E1'
+      box.rotation.y = 0
       box.userData.index = STATE.lineObjects['E1'].length - 2
       STATE.loopBoxArr.push(box)
       STATE.D3RunArr.splice(i, 1)
@@ -1446,7 +1447,6 @@ function D3LoopLineMove () {
         cloneBox.rotation.y = 0
         cloneBox.userData.index = 25 * STATE.D3RunArr.length
         cloneBox.userData.lineName = 'D3'
-        cloneBox.rotation.y = -Math.PI / 2
 
         const cloneBox2 = cloneBox.clone()
         cloneBox2.position.set(...STATE.lineObjects.D3[STATE.D3RunArr.length * 25])
