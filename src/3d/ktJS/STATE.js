@@ -14,7 +14,9 @@ let rkPasue = false,
   thisBoxWSMessage = {},
   tempThisBoxWSMessage = {},
   times = 0,
-  tsjReady = true,
+  tsjReady = true, // 提升机动画准备完成
+  hasReadyBox = false, // 是不是有准备往前走的料箱
+  d1BackBoxNum = 0, // d1线准备回去的箱子数量
   slow = false
 
 const lineObjects = {},
@@ -644,5 +646,7 @@ export const STATE = {
   renderT,
   D3RunArr,
   tsjReady,
+  hasReadyBox,
+  d1BackBoxNum,
   times
 }

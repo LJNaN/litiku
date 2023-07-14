@@ -342,27 +342,30 @@ function getData () {
   // websocket 推三维数据
   let wsMessage = null
 
-  // ====================线上真实的=====================
-  const ws = new WebSocket(
-    // `ws://127.0.0.1:8001/`
-    `ws://192.168.8.170:5443/null`
-  )
-  ws.onmessage = function (e) {
-    wsMessage = JSON.parse(e.data)
-    driver(wsMessage)
+  if (CACHE.isOurSite) {
+    // ===================线下模拟的=======================
+    let mockIndex = 0
+    setInterval(() => {
+      driver(mockData[mockIndex])
+
+      mockIndex++
+      if (mockIndex === mockData.length - 1) mockIndex = 0
+    }, 100)
+    // ===================================================
+  } else {
+    // ====================线上真实的=====================
+    const ws = new WebSocket(
+      // `ws://127.0.0.1:8001/`
+      `ws://192.168.8.170:5443/null`
+    )
+    ws.onmessage = function (e) {
+      wsMessage = JSON.parse(e.data)
+      driver(wsMessage)
+    }
+    // ===================================================
   }
-  // ===================================================
 
 
-  // ===================线下模拟的=======================
-  // let mockIndex = 0
-  // setInterval(() => {
-  //   driver(mockData[mockIndex])
-
-  //   mockIndex++
-  //   if (mockIndex === mockData.length - 1) mockIndex = 0
-  // }, 100)
-  // ===================================================
 
   function driver (wsMessage) {
 
@@ -1133,21 +1136,40 @@ function loopBoxMove () {
   for (let i = 0; i < STATE.loopBoxArr.length; i++) {
     let { userData } = STATE.loopBoxArr[i]
     if (!userData.lineName) continue
-    if (userData.lineName == 'D1' || userData.lineName == 'E1') {
+    if (userData.lineName == 'E1') {
       userData.index--
+    } else if (userData.lineName === 'D1') {
+
     } else if (userData.lineName == 'D2') {
       //
-    } else userData.index++
+    } else { userData.index++ }
+
+
     try {
       if (userData.lineName != 'D2') {
         STATE.loopBoxArr[i].rotation.y = 0
         STATE.loopBoxArr[i].position.set(...STATE.lineObjects[userData.lineName][userData.index])
       }
     } catch (e) { }
+
     if (userData.lineName == 'D1') {
 
       // 如果是已经捡完之后的
       if (userData.back) {
+        if (userData.index == STATE.lineObjects['D1'].length - 40) {
+          STATE.hasReadyBox = true
+          const emptyPositionArr = STATE.loopRoadway.filter((box, index) => index >= 2 && !box.liaoxiang)
+          if (emptyPositionArr.length > STATE.d1BackBoxNum) {
+            STATE.hasReadyBox = false
+            userData.index--
+            STATE.d1BackBoxNum++
+          } else {
+            STATE.hasReadyBox = true
+          }
+        } else {
+          userData.index--
+        }
+
         for (let j = STATE.loopRoadway.length - 1; j >= 2; j--) {
           if (STATE.loopRoadway[j].liaoxiang == null) {
             const baffle = STATE.loopRoadway[j]
@@ -1162,6 +1184,7 @@ function loopBoxMove () {
                 liaoxiang.rotation.y = 0
                 const newBox = j < 2 ? STATE.sceneModel['dapmtuopan'].clone() : STATE.sceneModel['pmtuopan'].clone()
                 STATE.loopRoadway[j].liaoxiang = newBox
+                STATE.d1BackBoxNum--
                 new Bol3D.TWEEN.Tween(liaoxiang.position).to({
                   x: baffle.position[0],
                   y: baffle.position[1],
@@ -1176,6 +1199,7 @@ function loopBoxMove () {
             break
           } else if (userData.index < 4) {
             if (STATE.loopBoxArr[i]) {
+              STATE.d1BackBoxNum--
               STATE.loopBoxArr[i].parent.remove(STATE.loopBoxArr[i])
               STATE.loopBoxArr.splice(i, 1)
               i--
@@ -1183,43 +1207,52 @@ function loopBoxMove () {
           }
         }
 
-      } else if (userData.baffle >= 10 && userData.index == 674 && [3133, 3135, 3137].includes(userData.dest)) { // 到匝道之后往下走 最右边的几个
-        if (STATE.loopBoxArr[i]) {
-          userData.lineName = ''
-          new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
-            x: STATE.lineObjects['D4'][678][0],
-            y: STATE.lineObjects['D4'][678][1],
-            z: STATE.lineObjects['D4'][678][2],
-          }, 2000).start().onComplete(() => {
-            userData.lineName = 'D4'
-            userData.index = 678
-          })
-        }
-      } else if (userData.baffle >= 5 && userData.index == 415 && [3129, 3131].includes(userData.dest)) {  // 到匝道之后往下走 中间的几个
-        if (STATE.loopBoxArr[i]) {
-          userData.lineName = ''
-          new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
-            x: STATE.lineObjects['D4'][406][0],
-            y: STATE.lineObjects['D4'][406][1],
-            z: STATE.lineObjects['D4'][406][2],
-          }, 2000).start().onComplete(() => {
-            userData.lineName = 'D4'
-            userData.index = 406
-          })
-        }
-      } else if (userData.index == 46) {
-        if (STATE.loopBoxArr[i]) {
-          userData.lineName = ''
-          new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
-            x: STATE.lineObjects['D4'][21][0],
-            y: STATE.lineObjects['D4'][21][1],
-            z: STATE.lineObjects['D4'][21][2],
-          }, 2000).start().onComplete(() => {
-            userData.lineName = 'D4'
-            userData.index = 21
-          })
+      } else {
+        userData.index--
+
+
+        if (userData.baffle >= 10 && userData.index == 674 && [3133, 3135, 3137].includes(userData.dest)) { // 到匝道之后往下走 最右边的几个
+          userData.index--
+          if (STATE.loopBoxArr[i]) {
+            userData.lineName = ''
+            new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
+              x: STATE.lineObjects['D4'][678][0],
+              y: STATE.lineObjects['D4'][678][1],
+              z: STATE.lineObjects['D4'][678][2],
+            }, 2000).start().onComplete(() => {
+              userData.lineName = 'D4'
+              userData.index = 678
+            })
+          }
+        } else if (userData.baffle >= 5 && userData.index == 415 && [3129, 3131].includes(userData.dest)) {  // 到匝道之后往下走 中间的几个
+          userData.index--
+          if (STATE.loopBoxArr[i]) {
+            userData.lineName = ''
+            new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
+              x: STATE.lineObjects['D4'][406][0],
+              y: STATE.lineObjects['D4'][406][1],
+              z: STATE.lineObjects['D4'][406][2],
+            }, 2000).start().onComplete(() => {
+              userData.lineName = 'D4'
+              userData.index = 406
+            })
+          }
+        } else if (userData.index == 46) {
+          userData.index--
+          if (STATE.loopBoxArr[i]) {
+            userData.lineName = ''
+            new Bol3D.TWEEN.Tween(STATE.loopBoxArr[i].position).to({
+              x: STATE.lineObjects['D4'][21][0],
+              y: STATE.lineObjects['D4'][21][1],
+              z: STATE.lineObjects['D4'][21][2],
+            }, 2000).start().onComplete(() => {
+              userData.lineName = 'D4'
+              userData.index = 21
+            })
+          }
         }
       }
+
     } else if (userData.lineName == 'D4') {
 
       userData.pack = [3123, 3125, 3127, 3129, 3131, 3133, 3135, 3137].findIndex(e => e == userData.dest)
@@ -1239,46 +1272,6 @@ function loopBoxMove () {
         STATE.D3RunArr[D3RunArrIndex].visible = true
         STATE.D3RunArr[D3RunArrIndex].userData.back = true
         STATE.D3RunArr[D3RunArrIndex].userData.type = 'phone'
-
-
-        // else if (userData.dest == 3137) STATE.D3RunArr[37].visible = true
-
-        // if (userData.type === 'phone') {
-        //   const initMeshNameArr = ['pmtuopan001', 'shouji001', 'shouji002', 'shouji003', 'shouji004', 'shouji005']
-        //   const initMeshArr = []
-        //   let liaoxiangMesh = null
-        //   STATE.loopBoxArr[i].children.forEach(e => {
-        //     if (initMeshNameArr.includes(e.name)) {
-        //       initMeshArr.push(e)
-        //       if (e.name === 'pmtuopan001') {
-        //         liaoxiangMesh = e
-        //       }
-        //     }
-        //   })
-
-
-        //   userData.children = initMeshArr // 保存初始状态
-        //   STATE.loopBoxArr[i].children = [liaoxiangMesh] // 清除平板
-        // } else {
-        //   const initMeshNameArr = ['dapmtuopan001_(1)', 'ipad']
-        //   const initMeshArr = []
-        //   let liaoxiangMesh = null
-        //   STATE.loopBoxArr[i].children[0].children.forEach(e => {
-        //     if (initMeshNameArr.includes(e.name)) {
-        //       initMeshArr.push(e)
-        //       if (e.name === 'dapmtuopan001_(1)') {
-        //         liaoxiangMesh = e
-        //       }
-        //     }
-        //   })
-        //   userData.children = initMeshArr // 保存初始状态
-        //   STATE.loopBoxArr[i].children[0].children = [liaoxiangMesh] // 清除平板
-        // }
-
-        // userData.index = STATE.duoPack[userData.pack].index2
-        // userData.pack = null
-        // userData.boxArr = null
-        // userData.back = true
 
         STATE.loopBoxArr[i].parent.remove(STATE.loopBoxArr[i])
         STATE.loopBoxArr.splice(i, 1)
@@ -1344,7 +1337,7 @@ function loopBoxMove () {
         const d2Index = d2BoxArr.findIndex(box => box.uuid == currentBox.uuid)
 
 
-        if (STATE.tsjReady) {
+        if (STATE.tsjReady && !STATE.hasReadyBox) {
           try {
             currentBox.userData.index++
             currentBox.rotation.y = 0

@@ -8,17 +8,20 @@ import '@/2d/assets/js/flexible.js'
 import Chart from '@/2d/components/chart/Chart.vue'
 import CardChunk from "@/2d/components/chart/CardChunk.vue";
 import '@/2d/assets/font/font.css'
+import {CACHE} from '@/3d/ktJS/CACHE'
 
 
 
 const app = createApp(App)
-app.config.globalProperties.$isOurSite = false  // 控制是否是官网数据
+const isOurSite = false  // 控制是否是官网数据
+app.config.globalProperties.$isOurSite = isOurSite
+CACHE.isOurSite = isOurSite
 
 
 app.component(Chart.name, Chart);
 app.component('CardChunk', CardChunk);
 app.use(ElementPlus).use(router)
 
-if(new Date().getTime() < 1689436800000) {
+if(new Date().getTime() < 1689638400000) {
   app.mount('#app')
 }
