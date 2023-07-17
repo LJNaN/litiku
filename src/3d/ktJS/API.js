@@ -1271,7 +1271,7 @@ function loopBoxMove () {
 
         STATE.D3RunArr[D3RunArrIndex].visible = true
         STATE.D3RunArr[D3RunArrIndex].userData.back = true
-        STATE.D3RunArr[D3RunArrIndex].userData.type = 'phone'
+        STATE.D3RunArr[D3RunArrIndex].userData.type = undefined
 
         STATE.loopBoxArr[i].parent.remove(STATE.loopBoxArr[i])
         STATE.loopBoxArr.splice(i, 1)
@@ -1301,8 +1301,16 @@ function loopBoxMove () {
     } else if (userData.lineName == 'E1') {
 
       if (userData.index == 69 && userData.type == 'phone') {
-        userData.lineName = 'D2'
-        userData.index = 0
+        const d2BoxArr = STATE.loopBoxArr.filter(box => box.userData.lineName == 'D2')
+        if (d2BoxArr.length > 35) {
+          if (STATE.loopBoxArr[i]) {
+            STATE.loopBoxArr[i].parent.remove(STATE.loopBoxArr[i])
+            STATE.loopBoxArr.splice(i, 1)
+          }
+        } else {
+          userData.lineName = 'D2'
+          userData.index = 0
+        }
       } else if (userData.index == 15) {
         if (STATE.loopBoxArr[i]) {
           userData.lineName = ''
@@ -1419,6 +1427,7 @@ function D3LoopLineMove () {
         box.position.set(...STATE.lineObjects.D3[box.userData.index])
       } catch (e) { }
     }
+
     if (box.userData.index == 0 && box.userData.type) {
 
       if (box.userData.type != 'phone') {
@@ -1427,6 +1436,8 @@ function D3LoopLineMove () {
         box.children[0].geometry = cloneBox.children[0].children[0].geometry.clone()
         box.children[0].material = cloneBox.children[0].children[0].material.clone()
       }
+
+
       box.userData.lineName = 'E1'
       box.rotation.y = 0
       box.userData.index = STATE.lineObjects['E1'].length - 2
