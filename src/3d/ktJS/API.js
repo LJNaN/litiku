@@ -356,7 +356,8 @@ function getData () {
     // ====================线上真实的=====================
     const ws = new WebSocket(
       // `ws://127.0.0.1:8001/`
-      `ws://192.168.8.170:5443/null`
+      // `ws://192.168.8.170:5443/null`
+      `${window.wsAPI}`
     )
     ws.onmessage = function (e) {
       wsMessage = JSON.parse(e.data)
