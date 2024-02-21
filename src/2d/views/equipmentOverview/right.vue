@@ -417,8 +417,8 @@ const echart = {
         }
 
         .td {
-          height: 0.3625rem;
-          font-size: 0.15rem;
+          height: 0.6vw;
+          font-size: 0.6vw;
           color: #c5d0d4;
           text-align: center;
 

@@ -267,7 +267,7 @@ const echart = {
       }
 
       &-center {
-        font-size: 0.2vw;
+        font-size: 0.6vw;
         display: flex;
         flex-direction: column;
         justify-content: space-between;

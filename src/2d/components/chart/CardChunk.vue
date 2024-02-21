@@ -18,7 +18,7 @@
 
 <script setup>
 import PlumBlossomIcon from '@/2d/components/PlumBlossomIcon.vue'
-import { defineProps } from "vue";
+import { defineProps } from "vue"
 const props = defineProps({
   title: String,
   moreText: Object,
@@ -26,7 +26,7 @@ const props = defineProps({
     type: String,
     default: "#999999",
   },
-});
+})
 </script>
 <style lang="less" scoped>
 .chunk {
@@ -36,7 +36,7 @@ const props = defineProps({
   .chunk_head {
     width: 100%;
     height: 3.5rem;
-    font-size: 0.2rem;
+    font-size: 0.6vw;
     color: #FFF;
     line-height: 3.5rem;
     align-items: center;
@@ -53,10 +53,12 @@ const props = defineProps({
     .more-content {
       display: flex;
       margin-right: 1.04vw;
+
       .more {
         display: flex;
         align-items: center;
         margin-left: 0.42vw;
+
         span {
           margin-left: 0.21vw;
         }
