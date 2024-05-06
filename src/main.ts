@@ -13,7 +13,7 @@ import {CACHE} from '@/3d/ktJS/CACHE'
 
 
 const app = createApp(App)
-const isOurSite = false  // 控制是否是官网数据
+const isOurSite = true  // 控制是否是官网数据
 app.config.globalProperties.$isOurSite = isOurSite
 CACHE.isOurSite = isOurSite
 

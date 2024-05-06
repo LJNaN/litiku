@@ -754,8 +754,8 @@ export const sceneOnLoad = ({ domElement, callback }) => {
           if (child.name == "dipi" && child.isMesh) {
             CACHE.dipi = child
             child.material.encoding = Bol3D.sRGBEncoding
-            child.material.color.set('#0d2121')
-            child.material.emissive.set('#0a5643')
+            child.material.color.set('#080808')
+            child.material.emissive.set('#222222')
             child.material.roughness = 0.48
             child.material.metalness = 0.1
             child.material.transparent = false
